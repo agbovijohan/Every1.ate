@@ -1,0 +1,1130 @@
+/* =========================================================
+   EVERY1.ATE — STYLE
+   Desktop = référence (> 480px)
+   Mobile  = composition dédiée (<= 480px)
+   ---------------------------------------------------------
+   0. Base
+   1. Hero
+   2. Notre approche
+   3. Transition EVERY1.ATE
+   4. Footer + Marquee
+   5. Formulaire
+   6. Tablette (481px – 900px)
+   7. Mobile (<= 480px)
+   ========================================================= */
+
+
+/* =========================================================
+   0. BASE
+   ========================================================= */
+
+:root {
+  --black: #000;
+  --white: #fff;
+  --cream: #f2f0ea;
+
+  --font-title: "Arimo", Arial, Helvetica, sans-serif;
+  --font-text: "Courier Prime", "Courier New", Courier, monospace;
+
+  --gutter: clamp(20px, 3.5vw, 56px);
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  /* "clip" coupe le débordement horizontal SANS casser position: sticky */
+  overflow-x: clip;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3, p, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+
+body.e1-form-open {
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   1. HERO
+   ========================================================= */
+
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  background: var(--black);
+  color: var(--white);
+}
+
+.hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* --- Top bar --- */
+
+.hero-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: clamp(18px, 2.2vw, 36px) var(--gutter) 0;
+  font-family: var(--font-text);
+  font-size: clamp(12px, 1vw, 16px);
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.hero-open {
+  font-weight: 700;
+}
+
+.hero-clock {
+  padding-top: .7em;
+  letter-spacing: .04em;
+  white-space: pre;
+}
+
+/* --- Logo desktop --- */
+
+.hero-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: clamp(150px, 12vw, 230px);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.hero-logo img {
+  width: 100%;
+  height: auto;
+}
+
+.hero-tagline {
+  margin-top: .8em;
+  font-family: var(--font-text);
+  font-size: clamp(8px, .62vw, 11px);
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+/* --- Éléments mobiles : cachés sur desktop --- */
+
+.m-icon,
+.m-typo,
+.m-bar {
+  display: none;
+}
+
+/* --- Bas du hero --- */
+
+.hero-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  padding: 0 var(--gutter) clamp(50px, 4vw, 70px);
+}
+
+.hero-statement {
+  max-width: 54vw;
+  font-family: var(--font-title);
+  font-size: clamp(20px, 2.05vw, 34px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  mix-blend-mode: difference;
+}
+
+/* CTA éditorial : contour 1px, fond transparent, aucun arrondi */
+.hero-cta {
+  flex-shrink: 0;
+  padding: .35em .6em .38em;
+  border: 1px solid var(--white);
+  border-radius: 0;
+  background: transparent;
+  color: var(--white);
+  font-family: var(--font-title);
+  font-size: clamp(18px, 1.9vw, 32px);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background 220ms ease, color 220ms ease;
+}
+
+.hero-cta span {
+  display: inline-block;
+  transition: transform 220ms var(--ease);
+}
+
+.hero-cta:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.hero-cta:hover span {
+  transform: translate(2px, -2px);
+}
+
+
+/* =========================================================
+   2. NOTRE APPROCHE
+   ========================================================= */
+
+.details {
+  display: grid;
+  grid-template-columns: minmax(0, 27fr) minmax(0, 21fr) minmax(0, 53fr);
+  column-gap: clamp(40px, 6.3vw, 110px);
+  padding: clamp(50px, 3.6vw, 64px) var(--gutter) clamp(70px, 6vw, 110px);
+}
+
+.col-title {
+  margin-bottom: 1.1em;
+  font-family: var(--font-title);
+  font-size: clamp(19px, 1.65vw, 28px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+}
+
+.approche-text {
+  font-size: clamp(13px, 1.02vw, 17px);
+  line-height: 1.28;
+}
+
+.approche-text + .approche-text {
+  margin-top: 1.28em;
+}
+
+.approche-text b {
+  font-weight: 700;
+}
+
+.expertises {
+  font-size: clamp(14px, 1.2vw, 20px);
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.expertises li + li {
+  margin-top: 1.3em;
+}
+
+/* --- Brigade --- */
+
+.col-brigade .col-title {
+  /* aligne visuellement le titre avec les portraits */
+  margin-bottom: .55em;
+}
+
+.brigade {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 4px;
+  margin-left: -10px;
+}
+
+.member-photo {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 225 / 295;
+  background: var(--white);
+}
+
+.member-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 240ms var(--ease);
+}
+
+.member-photo:hover img {
+  transform: scale(1.035);
+}
+
+.member-name,
+.member-aka,
+.member-role {
+  padding-left: 10px;
+  text-transform: uppercase;
+}
+
+.member-name {
+  margin-top: .7em;
+  font-size: clamp(14px, 1.15vw, 19px);
+  font-weight: 700;
+}
+
+.member-aka {
+  margin-top: 1.4em;
+  font-size: clamp(11px, .88vw, 14px);
+}
+
+.member-role {
+  margin-top: 1.2em;
+  font-size: clamp(13px, 1.15vw, 19px);
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   3. TRANSITION EVERY1.ATE
+   ========================================================= */
+
+.logo-transition {
+  padding: 0 .4vw;
+  background: var(--white);
+  line-height: 0;
+}
+
+.logo-transition img {
+  width: 100%;
+  height: auto;
+}
+
+
+/* =========================================================
+   4. FOOTER + MARQUEE
+   ========================================================= */
+
+.footer {
+  background: var(--black);
+  color: var(--white);
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: baseline;
+  gap: 24px;
+  padding: clamp(26px, 2.2vw, 40px) clamp(20px, 2.1vw, 36px) clamp(18px, 1.6vw, 28px);
+}
+
+.footer-link {
+  justify-self: start;
+  font-family: var(--font-title);
+  font-size: clamp(15px, 1.3vw, 22px);
+  line-height: 1.1;
+  text-transform: uppercase;
+  transition: opacity 180ms ease;
+}
+
+.footer-main > :nth-child(2) {
+  justify-self: center;
+}
+
+.footer-email {
+  justify-self: end;
+  font-family: var(--font-text);
+  font-size: clamp(15px, 1.4vw, 24px);
+  font-weight: 700;
+  transition: opacity 180ms ease;
+}
+
+.footer-link:hover,
+.footer-email:hover {
+  opacity: .6;
+}
+
+/* --- Marquee --- */
+
+.e1-marquee {
+  width: 100%;
+  overflow: hidden;
+  background: var(--black);
+  padding: 12px 0 22px;
+}
+
+.e1-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: e1-scroll 75s linear infinite;
+  will-change: transform;
+}
+
+.e1-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.e1-marquee-text {
+  display: block;
+  flex-shrink: 0;
+  font-family: var(--font-title);
+  font-size: clamp(20px, 2.4vw, 40px);
+  font-weight: 400;
+  line-height: .95;
+  color: var(--cream);
+  white-space: nowrap;
+  padding-right: 18vw;
+}
+
+@keyframes e1-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* --- Meta --- */
+
+.footer-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  padding: 14px clamp(20px, 2.1vw, 36px) 26px;
+  font-family: var(--font-text);
+  font-size: clamp(11px, .85vw, 14px);
+  text-transform: uppercase;
+}
+
+#footer-paris-clock {
+  white-space: pre;
+}
+
+.footer-meta a {
+  transition: opacity 180ms ease;
+}
+
+.footer-meta a:hover {
+  opacity: .6;
+}
+
+
+/* =========================================================
+   5. FORMULAIRE
+   ========================================================= */
+
+#e1-project-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease, visibility 180ms ease;
+}
+
+#e1-project-overlay.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.e1-project-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .08);
+}
+
+.e1-project-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(100%, clamp(580px, 40vw, 760px));
+  height: 100vh;
+  height: 100dvh;
+  padding: 22px 34px;
+  background: var(--white);
+  color: var(--black);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(100%);
+  transition: transform 430ms var(--ease);
+  box-shadow: -15px 0 40px rgba(0, 0, 0, .10);
+}
+
+#e1-project-overlay.is-open .e1-project-panel {
+  transform: translateX(0);
+}
+
+.e1-form-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.e1-form-kicker {
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.e1-form-close {
+  font-family: var(--font-title);
+  font-size: 14px;
+  transition: opacity 180ms ease;
+}
+
+.e1-form-close:hover {
+  opacity: .6;
+}
+
+.e1-form-title {
+  margin: 0 0 12px;
+  font-family: var(--font-title);
+  font-size: clamp(46px, 3.8vw, 68px);
+  font-weight: 400;
+  line-height: .88;
+  letter-spacing: -.045em;
+  text-transform: uppercase;
+}
+
+.e1-form-intro {
+  max-width: 500px;
+  margin: 0 0 22px;
+  font-family: var(--font-text);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.e1-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 28px;
+  row-gap: 14px;
+}
+
+.e1-field {
+  min-width: 0;
+}
+
+.e1-full {
+  grid-column: 1 / -1;
+}
+
+.e1-field label,
+.e1-services-label {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--font-title);
+  font-size: 10px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.e1-field input,
+.e1-field textarea,
+.e1-field select {
+  display: block;
+  width: 100%;
+  padding: 4px 0 7px;
+  border: 0;
+  border-bottom: 1px solid var(--black);
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--black);
+  font-family: var(--font-text);
+  font-size: 16px; /* 16px évite le zoom auto sur iPhone */
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.e1-field input:focus,
+.e1-field textarea:focus,
+.e1-field select:focus {
+  border-bottom-width: 2px;
+}
+
+.e1-field textarea {
+  height: 64px;
+  resize: none;
+}
+
+.e1-select {
+  position: relative;
+}
+
+.e1-select::after {
+  content: "↓";
+  position: absolute;
+  right: 2px;
+  bottom: 7px;
+  font-family: var(--font-text);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.e1-services-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.e1-services-label {
+  margin-bottom: 0;
+}
+
+.e1-services-help {
+  font-family: var(--font-text);
+  font-size: 9px;
+  opacity: .5;
+}
+
+.e1-services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.e1-service {
+  position: relative;
+  cursor: pointer;
+}
+
+.e1-service input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.e1-service span {
+  display: inline-block;
+  padding: 6px 9px;
+  border: 1px solid var(--black);
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-title);
+  font-size: 9px;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.e1-service input:checked + span {
+  background: var(--black);
+  color: var(--white);
+}
+
+.e1-service input:focus-visible + span {
+  outline: 1px solid var(--black);
+  outline-offset: 2px;
+}
+
+#e1-services-error,
+#e1-form-error {
+  display: none;
+  margin-top: 7px;
+  font-family: var(--font-text);
+  font-size: 10px;
+}
+
+#e1-services-error.is-visible,
+#e1-form-error.is-visible {
+  display: block;
+}
+
+#e1-submit {
+  margin-top: 18px;
+  font-family: var(--font-title);
+  font-size: clamp(27px, 2.2vw, 38px);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  transition: opacity 180ms ease;
+}
+
+#e1-submit:hover {
+  opacity: .7;
+}
+
+#e1-submit:disabled {
+  opacity: .4;
+}
+
+.e1-form-privacy {
+  max-width: 430px;
+  margin-top: 10px;
+  font-family: var(--font-text);
+  font-size: 9px;
+  line-height: 1.25;
+  opacity: .5;
+}
+
+.e1-success {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 34px 32px;
+  background: var(--black);
+  color: var(--white);
+  transform: translateX(100%);
+  pointer-events: none;
+  transition: transform 520ms var(--ease);
+}
+
+.e1-project-panel.is-success {
+  overflow: hidden;
+}
+
+.e1-project-panel.is-success .e1-success {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.e1-success-top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.e1-success-content {
+  max-width: 580px;
+  margin: auto 0;
+}
+
+.e1-success-thanks {
+  margin: 0 0 42px;
+  font-family: var(--font-title);
+  font-size: clamp(72px, 7vw, 120px);
+  font-weight: 400;
+  line-height: .8;
+  letter-spacing: -.055em;
+}
+
+.e1-success-title {
+  margin-bottom: 28px;
+  font-family: var(--font-title);
+  font-size: clamp(26px, 2.8vw, 46px);
+  line-height: .95;
+  letter-spacing: -.035em;
+}
+
+.e1-success-copy {
+  max-width: 510px;
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.e1-success-delay {
+  margin-top: 22px;
+  font-family: var(--font-text);
+  font-size: 12px;
+  opacity: .6;
+}
+
+
+/* =========================================================
+   6. TABLETTE (481px – 900px)
+   Les 3 colonnes deviennent 2 + la brigade en pleine largeur.
+   ========================================================= */
+
+@media (min-width: 481px) and (max-width: 900px) {
+
+  .details {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    row-gap: 64px;
+  }
+
+  .col-brigade {
+    grid-column: 1 / -1;
+  }
+
+  .approche-text { font-size: 14px; }
+  .expertises    { font-size: 15px; }
+  .member-name,
+  .member-role   { font-size: 15px; }
+  .member-aka    { font-size: 12px; }
+
+  .hero-statement { max-width: 60vw; }
+
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-main > :nth-child(2) { justify-self: end; }
+  .footer-email { grid-column: 1 / -1; justify-self: start; }
+}
+
+
+/* =========================================================
+   7. MOBILE (<= 480px)
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+  :root {
+    --gutter: 20px;
+    --bar-h: 56px;
+  }
+
+  /* ---------- HERO ---------- */
+
+  /* La section est plus haute que l'écran : la scène reste
+     "collée" en haut le temps de l'animation, puis repart
+     naturellement avec le scroll. Aucun blocage. */
+  .hero {
+    height: 175vh;
+    height: 175svh;
+  }
+
+  .hero-logo {
+    display: none;
+  }
+
+  .hero-top {
+    padding-top: 18px;
+    font-size: 11px;
+  }
+
+  .hero-clock {
+    padding-top: 0;
+  }
+
+  /* Icône : position de départ (au-dessus de la typo) */
+  .m-icon {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 5;
+    width: 40vw;
+    max-width: 190px;
+    height: auto;
+    transform-origin: 50% 0;
+    transform: translate(-50%, calc(50svh - 100% - 24px));
+    will-change: transform;
+  }
+
+  /* Logo typographique + tagline */
+  .m-typo {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 74vw;
+    max-width: 340px;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .m-typo img {
+    width: 100%;
+    height: auto;
+  }
+
+  .m-typo .hero-tagline {
+    font-size: 10px;
+  }
+
+  /* Mini-barre noire de transition */
+  .m-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    height: var(--bar-h);
+    padding: 0 var(--gutter);
+    background: var(--black);
+    transform: translateY(-100%);
+    will-change: transform;
+  }
+
+  .m-bar-clock {
+    font-family: var(--font-text);
+    font-size: 11px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    white-space: pre;
+  }
+
+  /* Bas du hero : statement puis CTA, empilés */
+  .hero-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+    padding-bottom: max(34px, env(safe-area-inset-bottom));
+  }
+
+  .hero-statement {
+    max-width: none;
+    font-size: clamp(22px, 6.4vw, 28px);
+    line-height: 1.08;
+  }
+
+  .hero-cta {
+    font-size: 18px;
+    padding: .5em .75em .52em;
+  }
+
+  /* États de départ de l'animation (seulement si JS actif
+     et si l'utilisateur accepte les animations) */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .hero-statement,
+    .js .hero-cta {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    .js .hero-cta {
+      pointer-events: none;
+    }
+  }
+
+  /* Sans animation : hero sur un seul écran, tout visible */
+  @media (prefers-reduced-motion: reduce) {
+    .hero {
+      height: 100svh;
+    }
+    .m-typo {
+      top: 44%;
+    }
+    .m-icon {
+      transform: translate(-50%, calc(44svh - 100% - 24px));
+    }
+  }
+
+  /* ---------- NOTRE APPROCHE ---------- */
+
+  .details {
+    display: block;
+    padding: 56px var(--gutter) 72px;
+  }
+
+  .col + .col {
+    margin-top: 64px;
+  }
+
+  .col-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .col-brigade .col-title {
+    margin-bottom: 24px;
+  }
+
+  .approche-text {
+    font-size: 15px;
+    line-height: 1.38;
+  }
+
+  .expertises {
+    font-size: 16px;
+  }
+
+  .expertises li + li {
+    margin-top: 1.1em;
+  }
+
+  /* Brigade : une personne = un bloc (portrait + nom + rôles) */
+  .brigade {
+    display: block;
+    margin-left: 0;
+  }
+
+  .member + .member {
+    margin-top: 48px;
+  }
+
+  .member-photo {
+    width: 78%;
+    max-width: 320px;
+  }
+
+  .member-name,
+  .member-aka,
+  .member-role {
+    padding-left: 0;
+  }
+
+  .member-name {
+    margin-top: 14px;
+    font-size: 18px;
+  }
+
+  .member-aka {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+
+  .member-role {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  /* ---------- TRANSITION ---------- */
+
+  .logo-transition {
+    padding: 0 1vw;
+  }
+
+  /* ---------- FOOTER ---------- */
+
+  .footer-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 32px var(--gutter) 26px;
+  }
+
+  .footer-link {
+    font-size: 17px;
+  }
+
+  .footer-email {
+    order: -1;
+    margin-bottom: 8px;
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  .e1-marquee {
+    padding: 14px 0 20px;
+    border-top: 1px solid rgba(255, 255, 255, .2);
+    border-bottom: 1px solid rgba(255, 255, 255, .2);
+  }
+
+  .e1-marquee-text {
+    font-size: 22px;
+    padding-right: 22vw;
+  }
+
+  .footer-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 14px;
+    padding: 20px var(--gutter) max(28px, env(safe-area-inset-bottom));
+    font-size: 12px;
+  }
+
+  .footer-meta > :nth-child(even) {
+    justify-self: end;
+  }
+
+  /* ---------- FORMULAIRE ---------- */
+
+  .e1-project-panel {
+    width: 100%;
+    padding: 18px var(--gutter) 32px;
+    box-shadow: none;
+  }
+
+  .e1-form-title {
+    font-size: 48px;
+  }
+
+  .e1-form-intro {
+    font-size: 13px;
+  }
+
+  .e1-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 18px;
+  }
+
+  .e1-field label,
+  .e1-services-label {
+    font-size: 11px;
+  }
+
+  .e1-service span {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .e1-success {
+    padding: 18px var(--gutter) 32px;
+  }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ : animations réduites
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .e1-marquee-track {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: .01ms !important;
+  }
+}

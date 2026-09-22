@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>EVERY1.ATE — Creative &amp; Strategic Kitchen</title>
+<meta name="description" content="EVERY1.ATE, creative &amp; strategic kitchen. On cuisine des expériences pour que les marques vivent avec leur communauté.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="assets/Icone%20W.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+<!-- =====================================================
+     1. HERO
+     Desktop : 1 écran fixe.
+     Mobile  : section plus haute + scène "sticky" pour
+               l'animation au scroll (aucun blocage).
+     ===================================================== -->
+<header id="hero" class="hero">
+  <div class="hero-stage">
+
+    <!-- Une seule vidéo : le navigateur choisit la bonne source au chargement -->
+    <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+      <source media="(max-width: 480px)" src="https://gitlab.com/hello1616/silex_Every1.ate/-/raw/main/assets/E1.ate_-_vide%CC%81o_wok_9_16.mp4" type="video/mp4">
+      <source src="https://gitlab.com/hello1616/silex_Every1.ate/-/raw/main/assets/Video_WOK_web.mp4" type="video/mp4">
+    </video>
+
+    <!-- Top bar initiale -->
+    <div class="hero-top">
+      <p class="hero-open">La cuisine<br>est ouverte.</p>
+      <p class="hero-clock" data-paris-clock>PARIS, FR 00:00:00</p>
+    </div>
+
+    <!-- Logo desktop -->
+    <div class="hero-logo">
+      <img src="assets/Logo%20full%20W.png" alt="EVERY1.ATE">
+      <p class="hero-tagline">Creative &amp; Strategic Kitchen</p>
+    </div>
+
+    <!-- Logo mobile (icône + typo séparées pour l'animation) -->
+    <img class="m-icon" src="assets/Icone%20W.png" alt="" aria-hidden="true">
+    <div class="m-typo">
+      <img src="assets/Logo%20Typo%20W.png" alt="EVERY1.ATE">
+      <p class="hero-tagline">Creative &amp; Strategic Kitchen</p>
+    </div>
+
+    <!-- Mini-barre de transition (mobile uniquement, pas une navbar) -->
+    <div class="m-bar" aria-hidden="true">
+      <p class="m-bar-clock" data-paris-clock>PARIS, FR 00:00:00</p>
+    </div>
+
+    <!-- Bas du hero -->
+    <div class="hero-bottom">
+      <h1 class="hero-statement">On cuisine des expériences pour que les marques vivent avec leur communauté.</h1>
+      <button type="button" class="hero-cta" data-open-form>Parlons projet <span aria-hidden="true">↗</span></button>
+    </div>
+
+  </div>
+</header>
+
+
+<main>
+
+<!-- =====================================================
+     2. NOTRE APPROCHE
+     ===================================================== -->
+<section id="details-section" class="details">
+
+  <div id="approche" class="col col-approche">
+    <h2 class="col-title">Notre approche</h2>
+    <p class="approche-text">
+      On part des <b>bons ingrédients</b>&nbsp;:<br>
+      ce qui fait déjà la singularité d'une marque, ses produits, son histoire, sa communauté, ses codes et son environnement.
+    </p>
+    <p class="approche-text">
+      On regarde aussi ce qui bouge autour d'elle. On ne met <b>pas le même assaisonnement sur toutes les marques</b>. Ce qui est de saison n'a pas forcément sa place dans chaque recette. <b>Les tendances nous intéressent quand elles servent le projet</b>. Quand ce n'est pas le cas, on préfère prendre le contre-pied.
+    </p>
+    <p class="approche-text">
+      La bonne recette n’est pas celle du moment. C’est celle qui <b>crée du lien entre la marque et les gens</b>, nourrit l’attachement et qu’on sait mener jusqu’au bout.
+    </p>
+  </div>
+
+  <div id="expertises-list" class="col col-expertises">
+    <h2 class="col-title">Nos expertises</h2>
+    <ul class="expertises">
+      <li>Brand &amp; Creative Strategy</li>
+      <li>Direction Artistique</li>
+      <li>Content &amp; Production<br>Photo / Vidéo</li>
+      <li>Event &amp; Communauté</li>
+    </ul>
+  </div>
+
+  <div id="brigade-grid" class="col col-brigade">
+    <h2 class="col-title">La brigade</h2>
+    <div class="brigade">
+
+      <article class="member" id="brigade-johan">
+        <a id="photo-johan" class="member-photo" href="https://www.instagram.com/petitbelier._/" target="_blank" rel="noopener noreferrer" aria-label="Johan sur Instagram">
+          <img src="assets/SF%20Johan.png" alt="Portrait de Johan" loading="lazy">
+        </a>
+        <h3 class="member-name">Johan</h3>
+        <p class="member-aka">Aka Jo'</p>
+        <p class="member-role">Creative Strategist<br>&amp; Producer</p>
+      </article>
+
+      <article class="member" id="brigade-pierre">
+        <a id="photo-pierre" class="member-photo" href="https://www.instagram.com/boxitooooo/" target="_blank" rel="noopener noreferrer" aria-label="Pierre sur Instagram">
+          <img src="assets/SF%20Pierre.png" alt="Portrait de Pierre" loading="lazy">
+        </a>
+        <h3 class="member-name">Pierre</h3>
+        <p class="member-aka">Aka Boxito</p>
+        <p class="member-role">Art Director<br>&amp; Creative Tech</p>
+      </article>
+
+      <article class="member" id="brigade-charles">
+        <a id="photo-charles" class="member-photo" href="https://www.instagram.com/charleslnr/" target="_blank" rel="noopener noreferrer" aria-label="Charles sur Instagram">
+          <img src="assets/SF%20Charles.png" alt="Portrait de Charles" loading="lazy">
+        </a>
+        <h3 class="member-name">Charles</h3>
+        <p class="member-aka">Aka Charlito</p>
+        <p class="member-role">Film Director<br>&amp; Filmmaker</p>
+      </article>
+
+    </div>
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     3. TRANSITION EVERY1.ATE
+     ===================================================== -->
+<div id="Logo-transition" class="logo-transition">
+  <img src="assets/Logo%20Typo%20B.png" alt="EVERY1.ATE" loading="lazy">
+</div>
+
+</main>
+
+
+<!-- =====================================================
+     4. FOOTER : Main → Marquee → Meta
+     ===================================================== -->
+<footer id="footer" class="footer">
+
+  <div id="footer-main" class="footer-main">
+    <a id="footer-portfolio" class="footer-link" href="mailto:hello@every1ate.com?subject=Demande%20de%20portfolio%20%E2%80%94%20Every1.ate">Portfolio sur demande</a>
+    <button type="button" class="footer-link" data-open-form>Projets &amp; Collaborations</button>
+    <a id="footer-email" class="footer-email" href="mailto:hello@every1ate.com?subject=Contact%20%E2%80%94%20Every1.ate">hello@every1ate.com</a>
+  </div>
+
+  <div class="e1-marquee">
+    <div class="e1-marquee-track">
+
+      <div class="e1-marquee-group">
+        <span class="e1-marquee-text">THE CREATIVE &amp; STRATEGIC KITCHEN.</span>
+        <span class="e1-marquee-text">IDÉES FRAÎCHES ET GOÛTUES.</span>
+        <span class="e1-marquee-text">TOUJOURS PRÉPARÉES AVEC SOIN.</span>
+        <span class="e1-marquee-text">THE CREATIVE &amp; STRATEGIC KITCHEN.</span>
+        <span class="e1-marquee-text">SANS PLATS RÉCHAUFFÉS.</span>
+        <span class="e1-marquee-text">À PARTAGER AVEC LES BONNES PERSONNES.</span>
+      </div>
+
+      <div class="e1-marquee-group" aria-hidden="true">
+        <span class="e1-marquee-text">THE CREATIVE &amp; STRATEGIC KITCHEN.</span>
+        <span class="e1-marquee-text">IDÉES FRAÎCHES ET GOÛTUES.</span>
+        <span class="e1-marquee-text">TOUJOURS PRÉPARÉES AVEC SOIN.</span>
+        <span class="e1-marquee-text">THE CREATIVE &amp; STRATEGIC KITCHEN.</span>
+        <span class="e1-marquee-text">SANS PLATS RÉCHAUFFÉS.</span>
+        <span class="e1-marquee-text">À PARTAGER AVEC LES BONNES PERSONNES.</span>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="footer-meta" class="footer-meta">
+    <p id="footer-paris-clock" data-paris-clock>PARIS, FR 00:00:00</p>
+    <a id="footer-instagram" href="https://www.instagram.com/every1.ate/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    <a id="footer-linkedin" href="https://www.linkedin.com/company/every1-ate/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <p id="footer-legal">© 2026 EVERY1.ATE</p>
+  </div>
+
+</footer>
+
+
+<!-- =====================================================
+     FORMULAIRE "PARLONS PROJET"
+     ===================================================== -->
+<div id="e1-project-overlay" aria-hidden="true">
+
+  <div class="e1-project-backdrop"></div>
+
+  <div id="e1-project-panel" class="e1-project-panel" role="dialog" aria-modal="true" aria-labelledby="e1-form-title">
+
+    <div class="e1-form-top">
+      <div class="e1-form-kicker">Mise en cuisine</div>
+      <button class="e1-form-close" id="e1-form-close" type="button">FERMER ×</button>
+    </div>
+
+    <h2 id="e1-form-title" class="e1-form-title">PARLONS<br>PROJET.</h2>
+
+    <p class="e1-form-intro">Un brief, une idée, une collaboration en tête&nbsp;? Donnez-nous juste de quoi commencer.</p>
+
+    <form id="e1-project-form" action="https://formspree.io/f/mjyvnlvd" method="POST">
+
+      <input type="hidden" name="subject" value="Nouvelle demande projet — Every1.ate">
+
+      <div class="e1-form-grid">
+
+        <div class="e1-field">
+          <label for="e1-name">Nom / Prénom *</label>
+          <input id="e1-name" name="name" type="text" autocomplete="name" required>
+        </div>
+
+        <div class="e1-field">
+          <label for="e1-email">Email *</label>
+          <input id="e1-email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="e1-field">
+          <label for="e1-company">Marque / Agence</label>
+          <input id="e1-company" name="company" type="text" autocomplete="organization">
+        </div>
+
+        <div class="e1-field">
+          <label for="e1-budget">Budget / Devis *</label>
+          <div class="e1-select">
+            <select id="e1-budget" name="budget" required>
+              <option value="" disabled selected>Sélectionner</option>
+              <option value="3K€ — 5K€">3K€ — 5K€</option>
+              <option value="5K€ — 10K€">5K€ — 10K€</option>
+              <option value="10K€ — 20K€">10K€ — 20K€</option>
+              <option value="20K€ — 40K€">20K€ — 40K€</option>
+              <option value="40K€ +">40K€ +</option>
+              <option value="Demande de devis">Demande de devis</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="e1-field e1-full">
+          <div class="e1-services-header">
+            <span class="e1-services-label">De quoi avez-vous besoin ? *</span>
+            <span class="e1-services-help">Plusieurs choix possibles</span>
+          </div>
+
+          <div class="e1-services">
+            <label class="e1-service"><input type="checkbox" name="services" value="Stratégie de marque"><span>Stratégie de marque</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Stratégie créative"><span>Stratégie créative</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Direction artistique"><span>Direction artistique</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Contenu / Social Media"><span>Contenu / Social Media</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Production photo"><span>Production photo</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Production vidéo"><span>Production vidéo</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Événement / Activation"><span>Événement / Activation</span></label>
+            <label class="e1-service"><input type="checkbox" name="services" value="Autre"><span>Autre</span></label>
+          </div>
+
+          <div id="e1-services-error">Sélectionnez au moins une option.</div>
+        </div>
+
+        <div class="e1-field e1-full">
+          <label for="e1-message">Parlez-nous du projet *</label>
+          <textarea id="e1-message" name="message" required></textarea>
+        </div>
+
+      </div>
+
+      <button id="e1-submit" type="submit">ENVOYER ↗</button>
+
+      <div id="e1-form-error">Oups — l’envoi n’est pas passé. Réessayez dans un instant.</div>
+
+      <div class="e1-form-privacy">Vos informations sont utilisées uniquement pour traiter et répondre à votre demande.</div>
+
+    </form>
+
+    <div id="e1-success" class="e1-success">
+      <div class="e1-success-top">
+        <button id="e1-success-close" class="e1-form-close" type="button">FERMER ×</button>
+      </div>
+      <div class="e1-success-content">
+        <h3 class="e1-success-thanks">MERCI.</h3>
+        <div class="e1-success-title">VOTRE DEMANDE EST<br>ENTRE DE BONNES MAINS.</div>
+        <p class="e1-success-copy">On prend le temps de bien regarder et on revient vers vous par mail pour en parler plus précisément.</p>
+        <div class="e1-success-delay">Comptez généralement 48 à 72h.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>

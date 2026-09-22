@@ -1,0 +1,9 @@
+Déposez ici les images du site (noms EXACTS, espaces compris) :
+
+  Logo full W.png     logo complet blanc (hero desktop)
+  Icone W.png         icône seule, blanche, fond transparent (hero mobile + favicon)
+  Logo Typo W.png     logo typographique seul, blanc, fond transparent (hero mobile)
+  Logo Typo B.png     grand logo typographique noir (transition EVERY1.ATE)
+  SF Johan.png        portrait Johan
+  SF Pierre.png       portrait Pierre
+  SF Charles.png      portrait Charles
