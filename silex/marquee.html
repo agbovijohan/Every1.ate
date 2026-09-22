@@ -1,0 +1,119 @@
+<style>
+.e1-marquee {
+  width: 100%;
+  overflow: hidden;
+  background: #000000;
+  padding: 12px 0 22px;
+}
+
+.e1-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: e1-scroll 75s linear infinite;
+  will-change: transform;
+}
+
+.e1-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.e1-marquee-text {
+  display: block;
+  flex-shrink: 0;
+
+  font-family: "Arimo", Arial, sans-serif;
+  font-size: clamp(20px, 2.4vw, 40px);
+  font-weight: 400;
+  line-height: 0.95;
+
+  color: #f2f0ea !important;
+
+  white-space: nowrap;
+  padding-right: 18vw;
+}
+
+@keyframes e1-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .e1-marquee-track {
+    animation: none;
+  }
+}
+</style>
+
+<div class="e1-marquee">
+
+  <div class="e1-marquee-track">
+
+    <!-- GROUPE 1 -->
+    <div class="e1-marquee-group">
+
+      <span class="e1-marquee-text">
+        THE CREATIVE &amp; STRATEGIC KITCHEN.
+      </span>
+
+      <span class="e1-marquee-text">
+        IDÉES FRAÎCHES ET GOÛTUES.
+      </span>
+
+      <span class="e1-marquee-text">
+        TOUJOURS PRÉPARÉES AVEC SOIN.
+      </span>
+      
+      <span class="e1-marquee-text">
+        THE CREATIVE &amp; STRATEGIC KITCHEN.
+      </span>
+
+      <span class="e1-marquee-text">
+        SANS PLATS RÉCHAUFFÉS.
+      </span>
+
+      <span class="e1-marquee-text">
+        À PARTAGER AVEC LES BONNES PERSONNES.
+      </span>
+
+    </div>
+
+
+    <!-- GROUPE 2 — COPIE EXACTE -->
+    <div class="e1-marquee-group" aria-hidden="true">
+
+      <span class="e1-marquee-text">
+        THE CREATIVE &amp; STRATEGIC KITCHEN.
+      </span>
+
+      <span class="e1-marquee-text">
+        IDÉES FRAÎCHES ET GOÛTUES.
+      </span>
+
+      <span class="e1-marquee-text">
+        TOUJOURS PRÉPARÉES AVEC SOIN.
+      </span>
+      
+      <span class="e1-marquee-text">
+        THE CREATIVE &amp; STRATEGIC KITCHEN.
+      </span>
+
+      <span class="e1-marquee-text">
+        SANS PLATS RÉCHAUFFÉS.
+      </span>
+
+      <span class="e1-marquee-text">
+        À PARTAGER AVEC LES BONNES PERSONNES.
+      </span>
+
+    </div>
+
+  </div>
+
+</div>

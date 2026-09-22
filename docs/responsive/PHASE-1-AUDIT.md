@@ -18,7 +18,7 @@ dans le Style Manager en mode Mobile, sans code custom.
 | `Container-logo`, `hero-logo`, `hero-statement`, `open-project-form` | Oui |
 | `Container-logo Mobile`, `icone logo mobile`, `logo typo mobile` | **Non** |
 | `mobile-fixed-bar`, `mobile-fixed-icon`, `mobile-fixed-clock`, `Mobile fixed open` | **Non** |
-| Marquee avec 6 textes différents | **Non** — 6 × « THE CREATIVE & STRATEGIC KITCHEN. » |
+| Marquee avec 6 textes différents | Export : 6 × « THE CREATIVE & STRATEGIC KITCHEN. » — **version à jour fournie : `silex/marquee.html`** |
 | Ordre footer : Main → Marquee → Meta | **Non** — Main → Meta → Marquee (marquee hors de `#footer`) |
 
 Les noms contenant des espaces (`Container-logo Mobile`, …) sont des **noms de
@@ -31,7 +31,7 @@ calques** Silex, pas des IDs HTML valides.
 | A | `<script>` dans `#Top-bar` | Horloge | Doublon de G (2 `setInterval`) | SUPPRIMER (Phase 2) |
 | B | `<style>` dans `#Container-logo` | `mix-blend-mode` sur `#ildzb` | `#i8fkg`, `#idani` n'existent pas | GARDER, nettoyer (Phase 3) |
 | C | `<style>` dans `#brigade-pierre` | Hover portraits (img scale) | Doublon de E → double transform | SUPPRIMER (Phase 5) |
-| D | `<style>` + HTML marquee | Marquee | Textes + position | GARDER, corriger (Phase 6) |
+| D | `<style>` + HTML marquee | Marquee | Textes : OK (référence `silex/marquee.html`, 75s, padding 18vw). Reste : position (doit être entre Footer Main et Footer Meta) | GARDER, position à corriger (Phase 6) |
 | E | `<style>` « INTERACTIONS + FORM » | Hovers + formulaire | Panneau `min 580px` → cassé sur mobile ; `#footer-email/#footer-portfolio` inexistants | GARDER, compléter mobile plus tard |
 | F | HTML formulaire | Formulaire | — | GARDER |
 | G | `<script>` DOMContentLoaded | Vidéo + horloge + form + mails | Partie vidéo cible `ieeh-2` (inexistant) ; mails ciblent `footer-email`/`footer-portfolio` (inexistants) | GARDER, retirer la partie vidéo (Phase 2) |
