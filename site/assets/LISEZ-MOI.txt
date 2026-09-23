@@ -1,9 +1,13 @@
-Déposez ici les images du site (noms EXACTS, espaces compris) :
+Fichiers utilisés par le site :
 
-  Logo full W.png     logo complet blanc (hero desktop)
-  Icone W.png         icône seule, blanche, fond transparent (hero mobile + favicon)
-  Logo Typo W.png     logo typographique seul, blanc, fond transparent (hero mobile)
-  Logo Typo B.png     grand logo typographique noir (transition EVERY1.ATE)
-  SF Johan.png        portrait Johan
-  SF Pierre.png       portrait Pierre
-  SF Charles.png      portrait Charles
+  Logo full W.png       logo complet blanc (hero desktop)
+  Logo Icono W.png      icône seule blanche (hero mobile + favicon)
+  Logo Typo W.png       logo typographique blanc (hero mobile)
+  Logo Typo B.png       grand logo typographique noir (transition EVERY1.ATE)
+  SF Johan.png / SF Pierre.png / SF Charles.png   portraits
+  Video_WOK_web.mp4     vidéo desktop (16:9)
+  video-mobile.mp4      vidéo mobile (9:16) — copie optimisée de "E1.ate - vidéo wok 9_16.mp4"
+
+Fichiers présents mais non utilisés (peuvent être supprimés) :
+  E1.ate - vidéo wok 9_16.mp4, video wok vert.mp4, video_wok_vert.mp4,
+  Logo full B.png, Logo icono B.png, Logo Half Typo B.png, Logo half typo W.png

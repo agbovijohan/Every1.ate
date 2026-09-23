@@ -24,10 +24,9 @@ Ensuite, chaque modification poussée sur cette branche met le site à jour
 automatiquement (1 minute environ).
 
 ## Vidéos
-Chargées depuis GitLab (mêmes URLs que Silex). Une seule balise `<video>` :
-le navigateur prend la version 9:16 si l'écran fait ≤ 480px, sinon la version web.
-Pour plus de fiabilité, les héberger dans `assets/` et remplacer les deux `src`
-dans `index.html`.
+Hébergées dans `assets/`. Une seule balise `<video>` : le navigateur prend
+`video-mobile.mp4` (9:16, 4 Mo, optimisée pour démarrer vite) si l'écran fait
+≤ 480px, sinon `Video_WOK_web.mp4` (16:9).
 
 ## Formulaire
 Envoi via Formspree (`https://formspree.io/f/mjyvnlvd`), inchangé.
