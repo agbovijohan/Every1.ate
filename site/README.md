@@ -11,9 +11,17 @@ site/
 └── assets/      images (voir assets/LISEZ-MOI.txt)
 ```
 
-## Publier
-1. Copier les images dans `assets/` avec les noms indiqués.
-2. Envoyer le dossier `site/` entier sur l'hébergeur (index.html à la racine).
+## Publier sur Netlify (relié à GitHub)
+Le fichier `netlify.toml` (à la racine du dépôt) indique à Netlify de publier
+le dossier `site/`. Aucun réglage à faire.
+
+1. Créer un compte sur netlify.com avec « Sign up with GitHub ».
+2. Add new site → Import an existing project → GitHub → `agbovijohan/Every1.ate`.
+3. Branch to deploy : `claude/every1ate-responsive-redesign-emjjtf`.
+4. Laisser les autres champs tels quels → Deploy.
+
+Ensuite, chaque modification poussée sur cette branche met le site à jour
+automatiquement (1 minute environ).
 
 ## Vidéos
 Chargées depuis GitLab (mêmes URLs que Silex). Une seule balise `<video>` :

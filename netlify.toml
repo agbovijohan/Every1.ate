@@ -1,0 +1,18 @@
+# Netlify : publie uniquement le dossier "site/" (aucune étape de build)
+[build]
+  publish = "site"
+  command = ""
+
+# Images, vidéos, polices : mises en cache longtemps
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# HTML / CSS / JS : toujours revalidés → les mises à jour sont visibles tout de suite
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
