@@ -173,23 +173,74 @@
     progress.style.transform = "scaleX(" + ratio.toFixed(4) + ")";
   }
 
-  /* Une seule boucle de scroll pour tout (1 calcul par image) */
-  /* CTA flottant : après le hero, masqué dès que le footer arrive */
+  /* =======================================================
+     CTA : fixe dans le hero, puis se détache et flotte
+     -------------------------------------------------------
+     Dès que la page recouvre le bouton du hero, une copie
+     "flottante" part de sa position exacte et glisse vers le
+     coin de l'écran (et fait le chemin inverse en remontant).
+     Elle s'efface quand le footer arrive ou quand le
+     formulaire est ouvert.
+     ======================================================= */
+
   var floatCta = document.querySelector(".float-cta");
+  var heroCta = hero && hero.querySelector(".hero-cta");
   var footerEl = document.getElementById("footer");
+  var ctaState = "hero"; // "hero" | "float" | "hidden"
+
+  function morph(fromRect, reverse, done) {
+    var to = floatCta.getBoundingClientRect();
+    var dx = fromRect.left - to.left;
+    var dy = fromRect.top - to.top;
+    var sc = fromRect.height / (to.height || 1);
+    var away = "translate(" + dx + "px," + dy + "px) scale(" + sc + ")";
+    var frames = reverse ? [{ transform: "none" }, { transform: away }] : [{ transform: away }, { transform: "none" }];
+    if (!floatCta.animate || mqReduce.matches) { if (done) done(); return; }
+    var anim = floatCta.animate(frames, { duration: reverse ? 260 : 340, easing: "cubic-bezier(.22,1,.36,1)" });
+    if (done) anim.onfinish = done;
+  }
+
+  function setFloatVisible(on) {
+    floatCta.classList.toggle("is-visible", on);
+    floatCta.setAttribute("aria-hidden", on ? "false" : "true");
+    floatCta.tabIndex = on ? 0 : -1;
+  }
 
   function renderFloat() {
-    if (!floatCta || !hero || !footerEl) return;
-    var show = window.scrollY > hero.offsetHeight * 0.8 &&
-               footerEl.getBoundingClientRect().top > window.innerHeight * 0.85 &&
-               !document.body.classList.contains("e1-form-open");
-    if (show !== floatCta.classList.contains("is-visible")) {
-      floatCta.classList.toggle("is-visible", show);
-      floatCta.setAttribute("aria-hidden", show ? "false" : "true");
-      floatCta.tabIndex = show ? 0 : -1;
+    if (!floatCta || !heroCta || !footerEl) return;
+    var mainEl = document.getElementById("main");
+    var ctaRect = heroCta.getBoundingClientRect();
+    var covered = mainEl.getBoundingClientRect().top < ctaRect.bottom + 8;
+    var hide = footerEl.getBoundingClientRect().top < window.innerHeight * 0.85 ||
+               document.body.classList.contains("e1-form-open");
+    var next = !covered ? "hero" : (hide ? "hidden" : "float");
+    if (next === ctaState) return;
+
+    var prev = ctaState;
+    ctaState = next;
+
+    if (next === "float") {
+      heroCta.classList.add("is-detached");
+      setFloatVisible(true);
+      if (prev === "hero") morph(ctaRect, false);
+    } else if (next === "hidden") {
+      heroCta.classList.add("is-detached");
+      setFloatVisible(false);
+    } else { // retour dans le hero
+      if (prev === "float") {
+        morph(ctaRect, true, function () {
+          if (ctaState !== "hero") return;
+          setFloatVisible(false);
+          heroCta.classList.remove("is-detached");
+        });
+      } else {
+        setFloatVisible(false);
+        heroCta.classList.remove("is-detached");
+      }
     }
   }
 
+  /* Une seule boucle de scroll pour tout (1 calcul par image) */
   function frame() {
     ticking = false;
     render();
@@ -337,10 +388,20 @@
 
     if (canHover) {
       // Survol : clignement + bouche
+      var hoveredFace = null;
+
       faces.forEach(function (face) {
         face.parentNode.addEventListener("mouseenter", function () {
+          hoveredFace = face;
           blink(face);
           talk(face);
+          // les deux autres tournent la tête… enfin, les yeux
+          faces.forEach(function (other, i) {
+            if (other !== face) setTimeout(function () { blink(other); }, 180 + i * 90);
+          });
+        });
+        face.parentNode.addEventListener("mouseleave", function () {
+          if (hoveredFace === face) hoveredFace = null;
         });
       });
 
@@ -355,9 +416,15 @@
             var r = eye.getBoundingClientRect();
             var max = r.width * 0.16;
             var x = 0, y = 0;
-            if (pointer) {
-              var dx = pointer.x - (r.left + r.width / 2);
-              var dy = pointer.y - (r.top + r.height / 2);
+            var target = pointer;
+            // Si on survole un collègue, on le regarde lui
+            if (hoveredFace && hoveredFace !== face) {
+              var h = hoveredFace.getBoundingClientRect();
+              target = { x: h.left + h.width / 2, y: h.top + h.height * 0.45 };
+            }
+            if (target) {
+              var dx = target.x - (r.left + r.width / 2);
+              var dy = target.y - (r.top + r.height / 2);
               var dist = Math.sqrt(dx * dx + dy * dy) || 1;
               var k = Math.min(1, dist / 220);
               x = dx / dist * max * k;
@@ -503,7 +570,7 @@
   // 1. Pour les curieux qui ouvrent la console
   if (window.console && console.log) {
     console.log(
-      "%cEVERY1.ATE%c\nLa cuisine est ouverte, même ici.\nUne idée ? hello@every1ate.com\n\nIndices : tapez « chef » sur la page… ou essayez ↑ ↑ ↓ ↓ ← → ← → B A.",
+      "%cEVERY1.ATE%c\nLa cuisine est ouverte, même ici.\nUne idée ? hello@every1ate.com\n\nIndices : tapez « chef », « service » ou un prénom de la brigade… ou essayez ↑ ↑ ↓ ↓.",
       "font:700 28px Arimo,Arial,sans-serif;color:#000;background:#eaff00;padding:4px 10px;",
       "font:14px 'Courier Prime',monospace;"
     );
@@ -515,36 +582,147 @@
     document.title = document.hidden ? "Ça refroidit… — EVERY1.ATE" : baseTitle;
   });
 
-  // 3. Clavier : "chef" → toute la brigade répond ; Konami → mode négatif
-  var typed = "";
-  var konami = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-  var konamiStep = 0;
+  // 3. Mots magiques : tapez-les n'importe où sur la page
+  var faceOf = function (id) {
+    var el = document.querySelector("#photo-" + id + " .face");
+    return el ? [el] : [];
+  };
+
+  function wake(list, gap) {
+    list.forEach(function (face, i) {
+      setTimeout(function () { blink(face); talk(face); }, i * (gap || 120));
+    });
+  }
+
+  function replayMarks() {
+    document.querySelectorAll("[data-mark]").forEach(function (el, i) {
+      el.classList.remove("is-in");
+      void el.offsetWidth;
+      setTimeout(function () { el.classList.add("is-in"); }, 60 + i * 120);
+    });
+  }
+
+  var track = document.querySelector(".e1-marquee-track");
+
+  var words = {
+    chef:    function () { wake(faces); toast("Oui chef !"); },
+    johan:   function () { wake(faceOf("johan")); toast("Jo’ au rapport."); },
+    pierre:  function () { wake(faceOf("pierre")); toast("Boxito au rapport."); },
+    charles: function () { wake(faceOf("charles")); toast("Charlito : moteur… action !"); },
+    service: function () {
+      wake(faces, 220);
+      toast("Service ! Ça part en salle.");
+      if (track) {
+        track.style.animationDuration = "9s";
+        setTimeout(function () { track.style.animationDuration = ""; }, 3000);
+      }
+    },
+    sel:     function () { replayMarks(); toast("Une pincée de sel… et on relit."); },
+    miam:    function () { wake(faces, 60); toast("Merci, on transmet en cuisine."); },
+    hello:   function () { wake(faces, 90); toast("Hello ! On vous écoute."); }
+  };
+
+  var typedWords = "";
+  var arrows = "";
 
   document.addEventListener("keydown", function (event) {
     var t = event.target;
     if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
 
-    var key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
-
-    // Konami
-    konamiStep = key === konami[konamiStep] ? konamiStep + 1 : (key === konami[0] ? 1 : 0);
-    if (konamiStep === konami.length) {
-      konamiStep = 0;
-      var on = document.documentElement.classList.toggle("is-negative");
-      toast(on ? "Mode négatif. Comme nos portraits." : "Retour en cuisine.");
+    // Code secret simplifié : ↑ ↑ ↓ ↓ → mode négatif
+    if (event.key.indexOf("Arrow") === 0) {
+      arrows = (arrows + event.key.charAt(5)).slice(-4); // U, D, L, R
+      if (arrows === "UUDD") {
+        arrows = "";
+        var on = document.documentElement.classList.toggle("is-negative");
+        toast(on ? "Mode négatif. Comme nos portraits." : "Retour en cuisine.");
+      }
+      return;
     }
 
-    // "chef"
-    if (key.length === 1) {
-      typed = (typed + key).slice(-4);
-      if (typed === "chef") {
-        faces.forEach(function (face, i) {
-          setTimeout(function () { blink(face); talk(face); }, i * 120);
-        });
-        toast("Oui chef !");
+    if (event.key.length !== 1) return;
+    typedWords = (typedWords + event.key.toLowerCase()).slice(-12);
+    Object.keys(words).forEach(function (w) {
+      if (typedWords.slice(-w.length) === w) {
+        typedWords = "";
+        words[w]();
       }
+    });
+  });
+
+  // 4. Au toucher (mobile) : "les chefs !" fait parler la brigade,
+  //    l'icône du hero fait un coup de poêle
+  var chefsNote = document.querySelector(".note-inline");
+  if (chefsNote) {
+    chefsNote.style.cursor = "pointer";
+    chefsNote.addEventListener("click", function () { words.chef(); });
+  }
+
+  var tosses = 0;
+  if (icon) {
+    icon.addEventListener("click", function () {
+      icon.classList.remove("is-tossed");
+      void icon.offsetWidth;
+      icon.classList.add("is-tossed");
+      tosses += 1;
+      if (tosses % 3 === 0) toast("Joli coup de poêle.");
+    });
+  }
+
+
+  /* =======================================================
+     EXPERTISES — détail + exemple concret
+     Desktop : s'ouvre au survol · Mobile : au toucher
+     ======================================================= */
+
+  var xps = Array.prototype.slice.call(document.querySelectorAll(".xp"));
+
+  function setXp(item, open) {
+    item.classList.toggle("is-open", open);
+    item.querySelector(".xp-toggle").setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  function openOnly(item) {
+    xps.forEach(function (other) { setXp(other, other === item); });
+  }
+
+  xps.forEach(function (item) {
+    var intent = null;
+
+    item.querySelector(".xp-toggle").addEventListener("click", function () {
+      if (canHover && item.classList.contains("is-open")) return; // déjà ouvert par le survol
+      if (item.classList.contains("is-open")) setXp(item, false);
+      else openOnly(item);
+    });
+
+    if (canHover) {
+      // petite temporisation : on ne déplie pas en passant juste dessus
+      item.addEventListener("mouseenter", function () {
+        intent = setTimeout(function () { openOnly(item); }, 140);
+      });
+      item.addEventListener("mouseleave", function () {
+        clearTimeout(intent);
+        setXp(item, false);
+      });
     }
   });
+
+
+  /* =======================================================
+     PARTAGE NATIF (mobile surtout)
+     ======================================================= */
+
+  var shareBtn = document.querySelector(".share-site");
+  if (shareBtn && navigator.share) {
+    shareBtn.hidden = false;
+    shareBtn.addEventListener("click", function () {
+      navigator.share({
+        title: "EVERY1.ATE — Creative & Strategic Kitchen",
+        text: "Le studio qui cuisine des expériences pour que les marques vivent avec leur communauté.",
+        url: window.location.href
+      }).catch(function () {});
+    });
+  }
 
 
   /* =======================================================
@@ -614,6 +792,22 @@
   function openForm(event) {
     if (event) event.preventDefault();
     lastTrigger = document.activeElement;
+
+    // Depuis une expertise : on pré-coche les services correspondants
+    var from = event && event.currentTarget;
+    var preset = from && from.getAttribute && from.getAttribute("data-services");
+    if (preset) {
+      preset.split("|").forEach(function (value) {
+        form.querySelectorAll('input[name="services"]').forEach(function (input) {
+          if (input.value === value) input.checked = true;
+        });
+      });
+      servicesError.classList.remove("is-visible");
+    }
+
+    // Petit retour haptique (Android)
+    if (navigator.vibrate) navigator.vibrate(10);
+
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("e1-form-open");
