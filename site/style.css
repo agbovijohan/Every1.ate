@@ -164,6 +164,13 @@ body.e1-form-open {
   overflow: hidden;
 }
 
+.hero-video::-webkit-media-controls,
+.hero-video::-webkit-media-controls-start-playback-button,
+.hero-video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
 .hero-video {
   position: absolute;
   inset: 0;
@@ -827,13 +834,6 @@ body.e1-form-open {
   padding: clamp(48px, 6vw, 110px) var(--gutter) clamp(40px, 5vw, 80px);
 }
 
-.footer-kicker {
-  margin-bottom: 18px;
-  font-family: var(--font-text);
-  font-size: clamp(13px, 1vw, 16px);
-  text-transform: uppercase;
-  color: var(--fluo);
-}
 
 .footer-title {
   display: block;
@@ -898,12 +898,6 @@ body.e1-form-open {
   color: var(--black);
 }
 
-.footer-reassure {
-  margin-top: 22px;
-  font-family: var(--font-text);
-  font-size: 12px;
-  opacity: .6;
-}
 
 /* --- Infos --- */
 .footer-main {
@@ -1514,7 +1508,7 @@ body.e1-form-open {
   /* Mini-barre noire de transition */
   .m-bar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     position: absolute;
     top: 0;
@@ -1526,6 +1520,14 @@ body.e1-form-open {
     background: var(--black);
     transform: translateY(-100%);
     will-change: transform;
+  }
+
+  .m-bar-open {
+    font-family: var(--font-text);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .m-bar-clock {
@@ -1550,21 +1552,19 @@ body.e1-form-open {
     line-height: 1.08;
   }
 
+  /* CTA visible dès l'arrivée, pleine largeur : facile à toucher */
   .hero-cta {
+    align-self: stretch;
+    justify-content: space-between;
     font-size: 17px;
-    padding: .7em .9em .65em;
+    padding: .85em 1em .8em;
   }
 
-  /* États de départ de l'animation (seulement si JS actif
-     et si l'utilisateur accepte les animations) */
+  /* État de départ de l'animation (statement seulement) */
   @media (prefers-reduced-motion: no-preference) {
-    .js .hero-statement,
-    .js .hero-cta {
+    .js .hero-statement {
       opacity: 0;
       transform: translateY(18px);
-    }
-    .js .hero-cta {
-      pointer-events: none;
     }
   }
 
@@ -1927,6 +1927,202 @@ html.is-rush .rush-banner {
   padding-right: .5em;
 }
 
+/* 2e bandeau : la marque, en diagonale opposée */
+.rush-banner-2 {
+  top: 34%;
+  padding: 10px 0 8px;
+  background: var(--white);
+  transform: translateY(-50%) rotate(5deg) scaleY(0);
+  transition-delay: 120ms;
+}
+
+html.is-rush .rush-banner-2 {
+  transform: translateY(-50%) rotate(5deg) scaleY(1);
+}
+
+.rush-track-2 {
+  animation-direction: reverse;
+  animation-duration: 4.2s;
+}
+
+.rush-track-2 span {
+  display: block;
+  padding-right: 4vw;
+}
+
+.rush-track-2 img {
+  display: block;
+  height: clamp(34px, 6vw, 80px);
+  width: auto;
+}
+
+/* --- La brigade en cuisine : écran LCD façon Game & Watch --- */
+.rush-crew {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 946;
+  width: min(640px, calc(100vw - 24px));
+  padding: 10px;
+  border-radius: 14px;
+  background: #1c1c1c;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .35);
+  transform: translate(-50%, calc(100% + 40px));
+  transition: transform 380ms var(--ease);
+  pointer-events: none;
+}
+
+html.is-rush .rush-crew {
+  transform: translate(-50%, 0);
+}
+
+.crew-screen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 10px 8px 6px;
+  border-radius: 6px;
+  /* écran LCD gris-vert */
+  background: #c7ccb4;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .25);
+}
+
+.crew-fig {
+  position: relative;
+}
+
+/* la tête repose sur le cou du stickman */
+.crew-head {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 42%;
+  height: auto;
+  margin: 0 auto;
+  mix-blend-mode: multiply;
+  transform: translateX(0) scale(.25);
+  transform-origin: 50% 100%;
+}
+
+html.is-rush .crew-head {
+  animation: e1-grow 520ms cubic-bezier(.3, 1.6, .5, 1) 380ms both,
+             e1-bob 360ms steps(1) 900ms infinite;
+}
+
+.crew-body {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* le cou est à 66/160 de la hauteur du corps (= 50,8 % de sa largeur) */
+  margin-top: -49%;
+}
+
+.crew-body line,
+.crew-body polyline,
+.crew-body path {
+  fill: none;
+  stroke: #111;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.crew-body .thick { stroke-width: 7; }
+.crew-body .fill { fill: #111; stroke: none; }
+.crew-body .steam path { stroke-width: 2.5; }
+
+.crew-name {
+  display: block;
+  margin-top: 2px;
+  text-align: center;
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
+  text-transform: uppercase;
+}
+
+.crew-body g {
+  transform-box: fill-box;
+}
+
+.crew-body .leg-l,
+.crew-body .leg-r   { transform-origin: 50% 0; }
+.crew-body .arm     { transform-origin: 0 0; }
+
+/* Animations image par image (steps) : l'esprit Game & Watch */
+html.is-rush .crew-body .leg-l { animation: gw-leg 360ms steps(1) infinite; }
+html.is-rush .crew-body .leg-r { animation: gw-leg 360ms steps(1) 180ms infinite; }
+html.is-rush .crew-body .arm-l { animation: gw-arm-l 480ms steps(1) infinite; }
+
+html.is-rush .tool-pan   { animation: gw-flip 480ms steps(1) infinite; }
+html.is-rush .tool-pan .food { animation: gw-food 480ms steps(1) infinite; transform-box: fill-box; }
+html.is-rush .tool-knife { animation: gw-chop 260ms steps(1) infinite; }
+html.is-rush .tool-spoon { animation: gw-stir 400ms steps(1) infinite; }
+html.is-rush .crew-body .steam { animation: gw-steam 400ms steps(1) infinite; }
+
+@keyframes e1-grow {
+  from { transform: scale(.25); }
+  to   { transform: scale(1); }
+}
+
+@keyframes e1-bob {
+  0%   { translate: 0 0; }
+  50%  { translate: 0 -3px; }
+}
+
+@keyframes gw-leg {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(14deg); }
+}
+
+@keyframes gw-arm-l {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(-22deg); }
+}
+
+@keyframes gw-flip {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(-16deg); }
+}
+
+@keyframes gw-food {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-26px) rotate(180deg); }
+}
+
+@keyframes gw-chop {
+  0%   { transform: rotate(-14deg); }
+  50%  { transform: rotate(12deg); }
+}
+
+@keyframes gw-stir {
+  0%   { transform: rotate(-8deg) translateX(0); }
+  50%  { transform: rotate(8deg) translateX(3px); }
+}
+
+@keyframes gw-steam {
+  0%   { opacity: 1; }
+  50%  { opacity: .25; }
+}
+
+@media (max-width: 480px) {
+  .rush-crew {
+    padding: 7px;
+    border-radius: 10px;
+  }
+  .crew-name {
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-rush .crew-head {
+    animation: none;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html.is-rush main.stack-card,
   html.is-rush .hero-stage {
@@ -2021,6 +2217,7 @@ html.is-rush .rush-banner {
 
 .ticket-actions {
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-between;
   align-items: center;
   margin-top: 12px;
@@ -2116,21 +2313,48 @@ html.is-sketch .approche-text b {
   text-decoration: underline wavy var(--pen) 1.5px;
 }
 
-/* Mobile : la notification passe en haut (le bas est pris par le CTA flottant) */
+/* Mobile : notification en bas à droite, juste au-dessus du CTA flottant
+   (zone naturelle du pouce, main droite) */
 @media (max-width: 480px) {
   .toast {
-    top: max(14px, env(safe-area-inset-top));
-    bottom: auto;
-    transform: translate(-50%, -12px);
+    left: auto;
+    right: 14px;
+    bottom: calc(max(18px, env(safe-area-inset-bottom)) + 58px);
+    max-width: calc(100% - 28px);
+    text-align: left;
+    transform: translateY(12px);
   }
   .toast.is-visible {
-    transform: translate(-50%, 0);
+    transform: none;
+  }
+  .toast.has-action {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toast-action {
+    flex-shrink: 0;
+    padding: 10px 12px 9px;
   }
 }
 
 /* =========================================================
    BRIGADE — la fiche de chaque chef (s'ouvre en grand)
    ========================================================= */
+
+.member-insta {
+  display: inline-block;
+  margin-top: .5em;
+  padding-left: 10px;
+  font-family: var(--font-text);
+  font-size: clamp(11px, .85vw, 13px);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.member-insta:hover {
+  color: var(--pen);
+}
 
 .member-more {
   display: inline-flex;
@@ -2153,9 +2377,23 @@ html.is-sketch .approche-text b {
 }
 
 @media (max-width: 900px) {
+  .member {
+    grid-template-rows: auto auto auto auto auto 1fr;
+  }
+
+  .member-insta,
   .member-more {
     grid-column: 2;
+    justify-self: start;
     padding-left: 0;
+  }
+
+  /* bouton "Voir la fiche" bien visible, juste sous le texte */
+  .member-more {
+    margin-top: 14px;
+    padding: 11px 14px 10px;
+    border: 1.5px solid var(--black);
+    font-size: 13px;
   }
 }
 
@@ -2175,191 +2413,48 @@ html.is-sketch .approche-text b {
   pointer-events: auto;
 }
 
-/* La bulle : papier, contour noir, ombre franche (esprit jeu / BD) */
+/* Panneau fixe (seul le contenu change) — esprit "sélection de joueur" */
 .chef-bubble {
   position: fixed;
-  left: 0;
-  top: 0;
-  width: min(400px, calc(100vw - 24px));
-  max-height: calc(100dvh - 24px);
+  right: max(24px, env(safe-area-inset-right));
+  top: 50%;
+  width: min(400px, calc(100vw - 48px));
+  max-height: 84dvh;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 14px 18px 16px;
+  padding: 14px 18px 18px;
   border: 2px solid var(--black);
   background: var(--paper-color) var(--paper);
   color: var(--black);
   box-shadow: 7px 7px 0 var(--black);
   opacity: 0;
-  transform: scale(.94);
-  transform-origin: var(--origin, 0 0);
-  transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--ease);
+  transform: translate(24px, -50%);
+  transition: opacity var(--t-fast) ease, transform var(--t-base) var(--ease);
 }
 
 .chef.is-open .chef-bubble {
   opacity: 1;
-  transform: none;
+  transform: translate(0, -50%);
 }
 
-/* Pointe de la bulle, orientée vers le visage (côté fixé en JS) */
-.chef-tail {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background: var(--paper-color);
-  border: 2px solid var(--black);
-}
+/* Mobile : panneau en bas de l'écran, à portée de pouce */
+@media (max-width: 640px) {
+  .chef-bubble {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: auto;
+    max-height: 62dvh;
+    padding: 12px var(--gutter) max(20px, env(safe-area-inset-bottom));
+    border-width: 2px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, .25);
+    transform: translateY(100%);
+  }
 
-.chef-bubble[data-side="right"] .chef-tail {
-  left: -11px;
-  top: var(--tail, 40px);
-  border-top: 0;
-  border-right: 0;
-  transform: rotate(45deg);
-}
-
-.chef-bubble[data-side="left"] .chef-tail {
-  right: -11px;
-  top: var(--tail, 40px);
-  border-bottom: 0;
-  border-left: 0;
-  transform: rotate(45deg);
-}
-
-.chef-bubble[data-side="below"] .chef-tail {
-  top: -11px;
-  left: var(--tail, 40px);
-  border-bottom: 0;
-  border-right: 0;
-  transform: rotate(45deg);
-}
-
-.chef-bubble[data-side="above"] .chef-tail {
-  bottom: -11px;
-  left: var(--tail, 40px);
-  border-top: 0;
-  border-left: 0;
-  transform: rotate(45deg);
-}
-
-/* En-tête "sélection de joueur" : 3 emplacements */
-.chef-top {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--black);
-}
-
-.chef-tabs {
-  display: flex;
-  gap: 6px;
-}
-
-.chef-tab {
-  width: 40px;
-  height: 48px;
-  overflow: hidden;
-  border: 1.5px solid transparent;
-  opacity: .45;
-  transition: opacity var(--t-fast) ease, border-color var(--t-fast) ease, transform 120ms ease;
-}
-
-.chef-tab img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  mix-blend-mode: multiply;
-}
-
-.chef-tab:hover {
-  opacity: .8;
-}
-
-.chef-tab.is-active {
-  opacity: 1;
-  border-color: var(--black);
-}
-
-.chef-tab:active {
-  transform: scale(.94);
-}
-
-.chef-kicker {
-  margin-left: auto;
-  font-family: var(--font-text);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.chef-close {
-  font-family: var(--font-title);
-  font-size: 22px;
-  line-height: 1;
-  padding: 0 2px;
-}
-
-.chef-name {
-  margin-top: 14px;
-  font-family: var(--font-title);
-  font-size: 34px;
-  font-weight: 700;
-  line-height: .95;
-  letter-spacing: -.02em;
-  text-transform: uppercase;
-}
-
-.chef-link {
-  transition: color var(--t-fast) ease;
-}
-
-.chef-link:hover {
-  color: var(--pen);
-}
-
-.chef-aka {
-  display: inline-block;
-  font-size: .45em;
-  letter-spacing: 0;
-  vertical-align: .25em;
-}
-
-.chef-role {
-  margin-top: .45em;
-  padding-bottom: .8em;
-  border-bottom: 1px solid var(--black);
-  font-family: var(--font-title);
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.1;
-  text-transform: uppercase;
-}
-
-.chef-fiche {
-  margin: 4px 0 0;
-}
-
-.chef-fiche dt {
-  margin-top: 12px;
-  font-family: var(--font-title);
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.chef-fiche dd {
-  margin: .25em 0 0;
-  font-family: var(--font-text);
-  font-size: 13px;
-  line-height: 1.38;
-}
-
-.chef-hint {
-  margin-top: 14px;
-  font-family: var(--font-hand);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--pen);
+  .chef.is-open .chef-bubble {
+    transform: none;
+  }
 }
 
 /* le visage sélectionné est "encadré", comme un joueur choisi */

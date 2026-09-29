@@ -32,12 +32,12 @@
     }
 
     // Easter egg : entre minuit et 6 h (heure de Paris), service de nuit
-    var open = document.getElementById("hero-open");
-    if (open && !open.hasAttribute("data-force")) {
-      var night = parseInt(time.slice(0, 2), 10) < 6;
+    var night = parseInt(time.slice(0, 2), 10) < 6;
+    document.querySelectorAll(".open-label").forEach(function (open) {
+      if (open.hasAttribute("data-force")) return;
       var label = night ? "Service de nuit." : "La cuisine est ouverte.";
       if (open.textContent !== label) open.textContent = label;
-    }
+    });
   }
 
   updateClocks();
@@ -138,7 +138,6 @@
 
     var a = ease(range(p, 0, 0.35));     // barre + icône
     var b = ease(range(p, 0.30, 0.60));  // statement
-    var c = ease(range(p, 0.40, 0.70));  // CTA
     var d = ease(range(p, 0.82, 1));     // sortie de la barre
 
     var barOffset = (a - 1 - d) * m.barH;
@@ -158,9 +157,6 @@
     statement.style.opacity = b.toFixed(3);
     statement.style.transform = "translateY(" + ((1 - b) * 18).toFixed(2) + "px)";
 
-    cta.style.opacity = c.toFixed(3);
-    cta.style.transform = "translateY(" + ((1 - c) * 18).toFixed(2) + "px)";
-    cta.style.pointerEvents = c > 0.5 ? "auto" : "none";
   }
 
   /* Indicateur de défilement (barre fine en haut) */
@@ -273,11 +269,21 @@
     if (icon && !icon.complete) icon.addEventListener("load", measure);
   }
 
-  // Lecture auto de la vidéo (sécurité iOS / économie d'énergie)
+  // Lecture auto de la vidéo. Si le téléphone la bloque (mode économie
+  // d'énergie), on la relance au premier toucher, sans afficher de bouton.
   if (video) {
     video.muted = true;
-    var play = video.play();
-    if (play && typeof play.catch === "function") play.catch(function () {});
+    var tryPlay = function () {
+      var play = video.play();
+      if (play && typeof play.catch === "function") play.catch(function () {});
+    };
+    tryPlay();
+    ["touchstart", "pointerdown", "scroll"].forEach(function (evt) {
+      window.addEventListener(evt, function once() {
+        if (video.paused) tryPlay();
+        window.removeEventListener(evt, once);
+      }, { passive: true });
+    });
   }
 
 
@@ -637,7 +643,6 @@
     /* 1. COUP DE FEU — toute la page s'emballe 5 s */
     rush: function () {
       exclusive(5200, function () {
-        toast("Coup de feu en cuisine !");
         document.documentElement.classList.add("is-rush");
         replayMarks();
         if (track) track.style.animationDuration = "6s";
@@ -663,6 +668,7 @@
       ticket.querySelector(".ticket-no").textContent = "BON N° " + String(Math.floor(Math.random() * 900) + 100);
       ticket.classList.add("is-open");
       ticket.setAttribute("aria-hidden", "false");
+      ticketY = window.scrollY;
     },
 
     /* 3. PLUIE D'ASSIETTES — l'icône tombe par dizaines et rebondit */
@@ -867,15 +873,22 @@
     });
   });
 
-  // Fermer le ticket
-  var ticketClose = document.querySelector(".ticket-close");
-  if (ticketClose) {
-    ticketClose.addEventListener("click", function () {
-      var ticket = document.querySelector(".ticket");
-      ticket.classList.remove("is-open");
-      ticket.setAttribute("aria-hidden", "true");
-    });
+  // Fermer le ticket : bouton ×, ou dès qu'on fait défiler la page
+  var ticketEl = document.querySelector(".ticket");
+  var ticketY = 0;
+
+  function closeTicket() {
+    if (!ticketEl || !ticketEl.classList.contains("is-open")) return;
+    ticketEl.classList.remove("is-open");
+    ticketEl.setAttribute("aria-hidden", "true");
   }
+
+  var ticketClose = document.querySelector(".ticket-close");
+  if (ticketClose) ticketClose.addEventListener("click", closeTicket);
+
+  window.addEventListener("scroll", function () {
+    if (ticketEl && ticketEl.classList.contains("is-open") && Math.abs(window.scrollY - ticketY) > 40) closeTicket();
+  }, { passive: true });
 
   // Mots magiques au clavier
   var words = {
@@ -961,73 +974,30 @@
 
   /* =======================================================
      BRIGADE — la fiche de chaque chef
-     Clic sur un visage → une bulle s'ouvre accrochée à lui,
-     façon "sélection de joueur" (3 emplacements en haut).
-     Nom ou surnom → Instagram. Clic à côté / Échap → ferme.
+     Panneau fixe (à droite sur desktop, en bas sur mobile) :
+     seul le contenu change. AKA et @pseudo → Instagram.
      ======================================================= */
 
   var members = Array.prototype.slice.call(document.querySelectorAll(".member"));
   var chef = document.querySelector(".chef");
   var bubble = chef && chef.querySelector(".chef-bubble");
   var chefIndex = -1;
-  var chefScroll = 0;
-
-  function placeBubble() {
-    if (chefIndex < 0) return;
-    var photo = members[chefIndex].querySelector(".member-photo").getBoundingClientRect();
-    // si le visage sort de l'écran, on range la bulle
-    if (photo.bottom < 0 || photo.top > window.innerHeight) { closeChef(); return; }
-
-    var vw = window.innerWidth, vh = window.innerHeight, gap = 18, m = 12;
-    var bw = bubble.offsetWidth, bh = bubble.offsetHeight;
-    var side, x, y, tail;
-
-    bubble.style.maxHeight = "";
-    bh = bubble.offsetHeight;
-    if (photo.right + gap + bw + m <= vw) side = "right";
-    else if (photo.left - gap - bw - m >= 0) side = "left";
-    else side = (vh - photo.bottom > photo.top) ? "below" : "above";
-
-    if (side === "right" || side === "left") {
-      x = side === "right" ? photo.right + gap : photo.left - gap - bw;
-      y = Math.min(Math.max(m, photo.top), vh - bh - m);
-      tail = Math.min(Math.max(16, photo.top + photo.height * 0.35 - y), bh - 30);
-    } else {
-      // pas de place sur les côtés : la bulle prend la hauteur disponible
-      var room = side === "below" ? vh - photo.bottom - gap - m : photo.top - gap - m;
-      bubble.style.maxHeight = Math.max(220, room) + "px";
-      bh = bubble.offsetHeight;
-      x = Math.min(Math.max(m, photo.left + photo.width / 2 - bw / 2), vw - bw - m);
-      y = side === "below" ? photo.bottom + gap : photo.top - gap - bh;
-      y = Math.min(Math.max(m, y), vh - bh - m);
-      tail = Math.min(Math.max(16, photo.left + photo.width / 2 - x - 9), bw - 30);
-    }
-
-    bubble.dataset.side = side;
-    bubble.style.left = Math.round(x) + "px";
-    bubble.style.top = Math.round(y) + "px";
-    bubble.style.setProperty("--tail", Math.round(tail) + "px");
-    bubble.style.setProperty("--origin",
-      side === "right" ? "0 " + tail + "px" :
-      side === "left" ? "100% " + tail + "px" :
-      side === "below" ? tail + "px 0" : tail + "px 100%");
-  }
 
   function fillChef(i) {
     chefIndex = (i + members.length) % members.length;
     var mb = members[chefIndex];
-    var insta = mb.querySelector(".member-photo").getAttribute("href");
+    var insta = mb.querySelector(".member-insta");
 
     members.forEach(function (x, k) { x.classList.toggle("is-selected", k === chefIndex); });
     chef.querySelectorAll(".chef-tab").forEach(function (t, k) { t.classList.toggle("is-active", k === chefIndex); });
     chef.querySelector(".chef-index").textContent = (chefIndex + 1) + " / " + members.length;
 
-    var first = chef.querySelector(".chef-first");
+    chef.querySelector(".chef-first").textContent = mb.querySelector(".member-name").textContent;
     var aka = chef.querySelector(".chef-aka");
-    first.textContent = mb.querySelector(".member-name").textContent;
+    var handle = chef.querySelector(".chef-handle");
     aka.textContent = mb.querySelector(".member-aka").textContent;
-    first.href = aka.href = insta;
-    first.setAttribute("aria-label", first.textContent + " sur Instagram");
+    handle.textContent = insta.textContent;
+    aka.href = handle.href = insta.href;
     chef.querySelector(".chef-role").innerHTML = mb.querySelector(".member-role").innerHTML;
 
     var dl = chef.querySelector(".chef-fiche");
@@ -1040,24 +1010,13 @@
 
     var face = mb.querySelector(".face");
     if (face) { blink(face); talk(face); }
-    placeBubble();
   }
 
   function openChef(i) {
     if (!chef) return;
-    // Petit écran : on cale d'abord le portrait en haut, la bulle s'ouvre dessous
-    var photo = members[i].querySelector(".member-photo").getBoundingClientRect();
-    if (window.innerWidth < 700 && Math.abs(photo.top - 70) > 10) {
-      var target = window.scrollY + photo.top - 70;
-      // sans aller jusqu'au moment où le footer recouvre la brigade
-      var mainEl = document.getElementById("main");
-      if (hero && mainEl) target = Math.min(target, hero.offsetHeight + mainEl.offsetHeight - window.innerHeight);
-      window.scrollTo(0, Math.max(0, target));
-    }
+    fillChef(i);
     chef.classList.add("is-open");
     chef.setAttribute("aria-hidden", "false");
-    chefScroll = window.scrollY;
-    fillChef(i);
   }
 
   function closeChef() {
@@ -1079,15 +1038,16 @@
 
   if (chef) {
     chef.querySelector(".chef-close").addEventListener("click", closeChef);
-    // clic en dehors de la bulle (et hors d'un visage) → on ferme
+    chef.querySelectorAll(".chef-tab").forEach(function (t) {
+      t.addEventListener("click", function () { fillChef(parseInt(t.getAttribute("data-i"), 10)); });
+    });
+
+    // clic en dehors du panneau (et hors d'un visage) → on ferme
     document.addEventListener("click", function (event) {
       if (!chef.classList.contains("is-open")) return;
       if (bubble.contains(event.target)) return;
       if (event.target.closest(".member-photo, .member-more")) return;
       closeChef();
-    });
-    chef.querySelectorAll(".chef-tab").forEach(function (t) {
-      t.addEventListener("click", function () { fillChef(parseInt(t.getAttribute("data-i"), 10)); });
     });
 
     document.addEventListener("keydown", function (event) {
@@ -1097,17 +1057,17 @@
       if (event.key === "ArrowRight") fillChef(chefIndex + 1);
     });
 
-    // la bulle suit le visage au scroll et au redimensionnement
-    var placing = false;
-    var follow = function () {
-      if (chefIndex < 0 || placing) return;
-      // au toucher, faire défiler la page range la bulle
-      if (!canHover && Math.abs(window.scrollY - chefScroll) > 60) { closeChef(); return; }
-      placing = true;
-      window.requestAnimationFrame(function () { placing = false; placeBubble(); });
-    };
-    window.addEventListener("scroll", follow, { passive: true });
-    window.addEventListener("resize", follow);
+    // Mobile : glisser vers le bas ferme, glisser gauche/droite change de chef
+    var sx = null, sy = null;
+    bubble.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    bubble.addEventListener("touchend", function (e) {
+      if (sx === null) return;
+      var dx = e.changedTouches[0].clientX - sx;
+      var dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) fillChef(chefIndex + (dx < 0 ? 1 : -1));
+      else if (dy > 80 && bubble.scrollTop <= 0) closeChef();
+      sx = sy = null;
+    });
   }
 
 

@@ -37,7 +37,7 @@
 
     <!-- Top bar initiale -->
     <div class="hero-top">
-      <p class="hero-open" id="hero-open">La cuisine est ouverte.</p>
+      <p class="hero-open open-label" id="hero-open">La cuisine est ouverte.</p>
       <p class="hero-clock" data-paris-clock data-egg="nuit">PARIS, FR 00:00:00</p>
     </div>
 
@@ -56,6 +56,7 @@
 
     <!-- Mini-barre de transition (mobile uniquement, pas une navbar) -->
     <div class="m-bar" aria-hidden="true">
+      <p class="m-bar-open open-label">La cuisine est ouverte.</p>
       <p class="m-bar-clock" data-paris-clock>PARIS, FR 00:00:00</p>
     </div>
 
@@ -83,7 +84,6 @@
       On part des <b data-egg="plat" role="button" tabindex="0">bons ingrédients</b>&nbsp;:<br>
       ce qui fait déjà la <span class="pen pen-circle" data-egg="pluie" role="button" tabindex="0">singularité<svg class="pen-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M18 38C8 20 58 5 112 6c52 1 86 12 80 29-5 18-62 23-104 21C44 54 5 46 10 30 14 18 44 9 74 8"/></svg></span> d'une marque, ses produits, son histoire, sa communauté, ses codes et son environnement.
     </p>
-    <p class="note" data-mark><svg class="note-arrow" viewBox="0 0 44 32" aria-hidden="true" focusable="false"><path pathLength="1" d="M40 28C30 26 14 20 8 6M8 6 5 16M8 6l10 3"/></svg>tout part de là</p>
     <p class="approche-text" data-mark>
       On regarde aussi ce qui bouge autour d'elle. On ne met <b data-egg="croquis" role="button" tabindex="0">pas le même assaisonnement sur toutes les marques</b>. Ce qui est de saison n'a pas forcément sa place dans chaque recette. <b data-egg="rush" role="button" tabindex="0">Les tendances nous intéressent quand elles servent le projet</b>. Quand ce n'est pas le cas, on préfère prendre le <span class="pen pen-circle" data-egg="negatif" role="button" tabindex="0">contre-pied<svg class="pen-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M18 38C8 20 58 5 112 6c52 1 86 12 80 29-5 18-62 23-104 21C44 54 5 46 10 30 14 18 44 9 74 8"/></svg></span>.
     </p>
@@ -91,7 +91,6 @@
     <p class="approche-text" data-mark>
       La bonne recette n’est pas celle du moment. C’est celle qui <b data-egg="brigade" role="button" tabindex="0">crée du lien entre la marque et les gens</b>, <span class="pen pen-under" data-egg="clin" role="button" tabindex="0">nourrit l’attachement<svg class="pen-svg pen-svg-under" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 9c20-6 36 4 56-1s34-5 52 0 32 4 50-1 26-4 38 0"/></svg></span> et qu’on sait mener <span class="pen pen-circle" data-egg="bout" role="button" tabindex="0">jusqu’au bout<svg class="pen-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M18 38C8 20 58 5 112 6c52 1 86 12 80 29-5 18-62 23-104 21C44 54 5 46 10 30 14 18 44 9 74 8"/></svg></span>.
     </p>
-    <p class="note" data-mark><svg class="note-arrow" viewBox="0 0 44 32" aria-hidden="true" focusable="false"><path pathLength="1" d="M40 28C30 26 14 20 8 6M8 6 5 16M8 6l10 3"/></svg>promis, juré.</p>
   </div>
 
   <div id="expertises-list" class="col col-expertises" data-reveal>
@@ -176,6 +175,7 @@
         </a>
         <h3 class="member-name">Johan</h3>
         <p class="member-aka">Aka Petit Bélier</p>
+        <a class="member-insta" href="https://www.instagram.com/petitbelier._/" target="_blank" rel="noopener noreferrer">@petitbelier._</a>
         <p class="member-role">Créative Strategist<br>&amp; Producer</p>
         <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-johan"><span>Voir la fiche</span><svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
         <div class="member-fiche" id="fiche-johan">
@@ -200,6 +200,7 @@
         </a>
         <h3 class="member-name">Pierre</h3>
         <p class="member-aka">Aka Boxito</p>
+        <a class="member-insta" href="https://www.instagram.com/boxitooooo/" target="_blank" rel="noopener noreferrer">@boxitooooo</a>
         <p class="member-role">Directeur artistique<br>&amp; Graphiste</p>
         <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-pierre"><span>Voir la fiche</span><svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
         <div class="member-fiche" id="fiche-pierre">
@@ -224,6 +225,7 @@
         </a>
         <h3 class="member-name">Charles</h3>
         <p class="member-aka">Aka Charlito</p>
+        <a class="member-insta" href="https://www.instagram.com/charleslnr/" target="_blank" rel="noopener noreferrer">@charleslnr</a>
         <p class="member-role">Réal &amp; DOP</p>
         <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-charles"><span>Voir la fiche</span><svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
         <div class="member-fiche" id="fiche-charles">
@@ -257,28 +259,21 @@
   </div>
 
   <div class="footer-cta" id="footer-cta">
-    <p class="footer-kicker">Une idée sur le feu&nbsp;?</p>
     <button type="button" class="footer-title" data-open-form>Parlons de<br>votre projet<svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
 
     <div class="footer-mail">
       <a id="footer-email" href="mailto:hello@every1ate.com?subject=Contact%20%E2%80%94%20Every1.ate">hello@every1ate.com</a>
       <button type="button" class="copy-mail" data-copy="hello@every1ate.com">Copier</button>
     </div>
-    <p class="footer-reassure">Réponse sous 48 à 72&nbsp;h · Brief, idée ou simple café</p>
   </div>
 
   <div id="footer-main" class="footer-main">
     <ul class="footer-links">
-      <li><a id="footer-portfolio" href="mailto:hello@every1ate.com?subject=Demande%20de%20portfolio%20%E2%80%94%20Every1.ate">Portfolio sur demande</a></li>
       <li><a id="footer-instagram" href="https://www.instagram.com/every1.ate/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
       <li><a id="footer-linkedin" href="https://www.linkedin.com/company/every1-ate/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-      <li><button type="button" class="share-site" hidden>Partager le site</button></li>
-      <li><button type="button" class="open-carte open-carte-footer">La carte secrète</button></li>
+      <li><a href="mentions-legales.html">Mentions légales</a></li>
     </ul>
-    <div id="footer-meta" class="footer-meta">
-      <p id="footer-paris-clock" data-paris-clock>PARIS, FR 00:00:00</p>
-      <p id="footer-legal" data-egg="legal">© 2026 EVERY1.ATE</p>
-    </div>
+    <p id="footer-legal" class="footer-meta" data-egg="legal">© 2026 EVERY1.ATE · Studio créatif &amp; stratégique, Paris</p>
   </div>
 
   <div class="e1-marquee">
@@ -317,19 +312,18 @@
 <!-- Fiche d'un chef : bulle accrochée au visage, façon sélection de joueur -->
 <div class="chef" role="dialog" aria-labelledby="chef-name" aria-hidden="true">
   <div class="chef-bubble">
-    <span class="chef-tail" aria-hidden="true"></span>
     <div class="chef-top">
       <div class="chef-tabs"><button type="button" class="chef-tab" data-i="0" aria-label="Fiche de Johan"><img src="assets/SF%20Johan.png" alt=""></button><button type="button" class="chef-tab" data-i="1" aria-label="Fiche de Pierre"><img src="assets/SF%20Pierre.png" alt=""></button><button type="button" class="chef-tab" data-i="2" aria-label="Fiche de Charles"><img src="assets/SF%20Charles.png" alt=""></button></div>
       <p class="chef-kicker">Joueur <span class="chef-index">1 / 3</span></p>
       <button type="button" class="chef-close" aria-label="Fermer la fiche">×</button>
     </div>
-    <h3 id="chef-name" class="chef-name">
-      <a class="chef-link chef-first" href="#" target="_blank" rel="noopener noreferrer"></a>
+    <h3 id="chef-name" class="chef-name chef-first"></h3>
+    <p class="chef-aka-line">
       <a class="chef-link chef-aka" href="#" target="_blank" rel="noopener noreferrer"></a>
-    </h3>
+      <a class="chef-link chef-handle" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </p>
     <p class="chef-role"></p>
     <dl class="chef-fiche"></dl>
-    <p class="chef-hint">Nom ou surnom → son Instagram</p>
   </div>
 </div>
 
@@ -361,6 +355,30 @@
 
 <!-- Easter egg : coup de feu (bandeau) -->
 <div class="rush-banner" aria-hidden="true"><div class="rush-track"><span>Coup de feu&nbsp;! Ça envoie&nbsp;! Service&nbsp;! </span><span>Coup de feu&nbsp;! Ça envoie&nbsp;! Service&nbsp;! </span><span>Coup de feu&nbsp;! Ça envoie&nbsp;! Service&nbsp;! </span><span>Coup de feu&nbsp;! Ça envoie&nbsp;! Service&nbsp;! </span></div></div>
+
+<!-- Coup de feu : 2e bandeau (marque, diagonale opposée) -->
+<div class="rush-banner rush-banner-2" aria-hidden="true"><div class="rush-track rush-track-2"><span><img src="assets/Logo%20Typo%20B.png" alt=""></span><span><img src="assets/Logo%20Typo%20B.png" alt=""></span><span><img src="assets/Logo%20Typo%20B.png" alt=""></span><span><img src="assets/Logo%20Typo%20B.png" alt=""></span><span><img src="assets/Logo%20Typo%20B.png" alt=""></span><span><img src="assets/Logo%20Typo%20B.png" alt=""></span></div></div>
+
+<!-- Coup de feu : la brigade en cuisine, façon Game & Watch -->
+<div class="rush-crew" aria-hidden="true">
+  <div class="crew-screen">
+      <div class="crew-fig crew-johan">
+        <img class="crew-head" src="assets/SF%20Johan.png" alt="">
+        <svg class="crew-body" viewBox="0 0 130 160" aria-hidden="true" focusable="false"><g class="leg leg-l"><line x1="60" y1="112" x2="46" y2="150"/></g><g class="leg leg-r"><line x1="60" y1="112" x2="74" y2="150"/></g><line x1="60" y1="66" x2="60" y2="112"/><g class="arm arm-l"><polyline points="60,78 38,96 30,88"/></g><g class="arm arm-r tool-pan"><polyline points="60,78 88,90 104,90"/><ellipse cx="114" cy="90" rx="12" ry="4" class="fill"/><ellipse cx="114" cy="80" rx="7" ry="3" class="fill food"/></g></svg>
+        <span class="crew-name">Jo’</span>
+      </div>
+      <div class="crew-fig crew-pierre">
+        <img class="crew-head" src="assets/SF%20Pierre.png" alt="">
+        <svg class="crew-body" viewBox="0 0 130 160" aria-hidden="true" focusable="false"><g class="leg leg-l"><line x1="60" y1="112" x2="46" y2="150"/></g><g class="leg leg-r"><line x1="60" y1="112" x2="74" y2="150"/></g><line x1="60" y1="66" x2="60" y2="112"/><line x1="78" y1="120" x2="118" y2="120" class="thick"/><g class="arm arm-l"><polyline points="60,78 40,100 50,112"/></g><g class="arm arm-r tool-knife"><polyline points="60,78 86,100"/><rect x="86" y="98" width="20" height="5" class="fill"/></g></svg>
+        <span class="crew-name">Boxito</span>
+      </div>
+      <div class="crew-fig crew-charles">
+        <img class="crew-head" src="assets/SF%20Charles.png" alt="">
+        <svg class="crew-body" viewBox="0 0 130 160" aria-hidden="true" focusable="false"><g class="leg leg-l"><line x1="60" y1="112" x2="46" y2="150"/></g><g class="leg leg-r"><line x1="60" y1="112" x2="74" y2="150"/></g><line x1="60" y1="66" x2="60" y2="112"/><rect x="82" y="104" width="32" height="20" class="fill"/><line x1="78" y1="104" x2="118" y2="104" class="thick"/><g class="steam"><path d="M90 96c-4-5 4-8 0-13M100 96c-4-5 4-8 0-13M110 96c-4-5 4-8 0-13"/></g><g class="arm arm-l"><polyline points="60,78 38,92 34,104"/></g><g class="arm arm-r tool-spoon"><polyline points="60,78 94,96 98,112"/></g></svg>
+        <span class="crew-name">Charlito</span>
+      </div>
+  </div>
+</div>
 
 <!-- Easter egg : le plat du jour (ticket de cuisine) -->
 <aside class="ticket" aria-hidden="true">
@@ -399,11 +417,21 @@
 
     <h2 id="e1-form-title" class="e1-form-title">PARLONS<br>PROJET.</h2>
 
-    <p class="e1-form-intro">Un brief, une idée, une collaboration en tête&nbsp;? Donnez-nous juste de quoi commencer.</p>
+    <p class="e1-form-intro">Rendez-vous, brief ou collaboration : donnez-nous juste de quoi commencer. Réponse sous 48 à 72&nbsp;h.</p>
 
     <form id="e1-project-form" action="https://formspree.io/f/mjyvnlvd" method="POST">
 
       <input type="hidden" name="subject" value="Nouvelle demande projet — Every1.ate">
+
+      <fieldset class="e1-intent">
+        <legend class="e1-services-label">Je souhaite</legend>
+        <div class="e1-services">
+          <label class="e1-service"><input type="radio" name="intention" value="Prendre rendez-vous" checked><span>Prendre rendez-vous</span></label>
+          <label class="e1-service"><input type="radio" name="intention" value="Déposer un brief"><span>Déposer un brief</span></label>
+          <label class="e1-service"><input type="radio" name="intention" value="Travailler avec vous"><span>Travailler avec vous</span></label>
+          <label class="e1-service"><input type="radio" name="intention" value="Recevoir le portfolio"><span>Recevoir le portfolio</span></label>
+        </div>
+      </fieldset>
 
       <div class="e1-form-grid">
 
