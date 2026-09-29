@@ -1016,14 +1016,11 @@
     portrait.alt = img.alt;
     chef.querySelector(".chef-pos").textContent = mb.getAttribute("data-pos") || "";
 
-    // Points forts : diagramme + liste
+    // Ingrédients : diagramme (dosage) + liste
     var stats = (mb.getAttribute("data-stats") || "").split("|").map(function (pair) {
       var p = pair.split(":");
       return { label: p[0], value: parseInt(p[1], 10) };
     });
-    var total = 0;
-    stats.forEach(function (st) { total += st.value; });
-    chef.querySelector(".chef-overall").textContent = stats.length ? Math.round(total / stats.length) : "";
     drawRadar(chef.querySelector(".chef-radar"), stats);
     chef.querySelector(".chef-stat-list").innerHTML = stats.map(function (st) {
       return "<li><b>" + st.value + "</b>" + st.label + "</li>";

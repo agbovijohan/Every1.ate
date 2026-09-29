@@ -2541,14 +2541,35 @@ html.is-sketch .approche-text b {
   line-height: 1;
 }
 
-.chef-overall {
-  font-size: 40px;
-  letter-spacing: -.03em;
+.chef-badge-label {
+  font-family: var(--font-text);
+  font-size: 10px;
+  text-transform: uppercase;
 }
 
 .chef-pos {
-  margin-top: 2px;
+  margin-top: 3px;
+  max-width: 7em;
+  font-size: 17px;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.chef-stats-title {
+  margin-top: 22px;
+  font-family: var(--font-title);
   font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.chef-stats-title span {
+  margin-left: 8px;
+  font-family: var(--font-hand);
+  font-size: 17px;
+  color: var(--pen);
+  text-transform: none;
 }
 
 /* Diagramme des points forts */
@@ -2557,7 +2578,7 @@ html.is-sketch .approche-text b {
   grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
   gap: 10px 32px;
   align-items: center;
-  margin: 22px 0 6px;
+  margin: 6px 0 6px;
   padding-bottom: 18px;
   border-bottom: 1px solid var(--black);
 }
