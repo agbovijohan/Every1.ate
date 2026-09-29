@@ -200,7 +200,7 @@ body.e1-form-open {
 
 .hero-top,
 .hero-logo,
-.hero-statement,
+.hero-say,
 .m-icon,
 .m-typo {
   mix-blend-mode: difference;
@@ -271,21 +271,24 @@ body.e1-form-open {
 
 /* --- Bas du hero --- */
 
-.hero-bottom {
+/* Texte (en négatif sur la vidéo) et CTA : deux blocs indépendants,
+   sans conteneur commun, pour que l'effet négatif marche partout */
+.hero-say {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /* pas de z-index : sinon le statement serait isolé de la vidéo */
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 40px;
-  padding: 0 var(--gutter) clamp(50px, 4vw, 70px);
+  left: var(--gutter);
+  bottom: clamp(50px, 4vw, 70px);
+  max-width: 56vw;
+}
+
+.hero-kicker {
+  margin-bottom: 14px;
+  font-family: var(--font-text);
+  font-size: clamp(11px, .9vw, 14px);
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .hero-statement {
-  max-width: 54vw;
   font-family: var(--font-title);
   font-size: clamp(20px, 2.05vw, 34px);
   font-weight: 700;
@@ -298,7 +301,9 @@ body.e1-form-open {
    Survol : il passe en négatif (fond transparent, contour et texte blancs).
    Au scroll, il se détache et devient le CTA flottant (voir JS). */
 .hero-cta {
-  flex-shrink: 0;
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(50px, 4vw, 70px);
   display: inline-flex;
   align-items: center;
   padding: .55em .8em .5em;
@@ -1417,7 +1422,7 @@ body.e1-form-open {
   .member-role   { font-size: 15px; }
   .member-aka    { font-size: 12px; }
 
-  .hero-statement { max-width: 60vw; }
+  .hero-say { max-width: 60vw; }
 
 }
 
@@ -1562,31 +1567,36 @@ body.e1-form-open {
     white-space: pre;
   }
 
-  /* Bas du hero : statement puis CTA, empilés */
-  .hero-bottom {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 22px;
-    padding-bottom: max(34px, env(safe-area-inset-bottom));
+  /* Bas du hero : le texte au-dessus du CTA */
+  .hero-say {
+    right: var(--gutter);
+    bottom: calc(max(34px, env(safe-area-inset-bottom)) + 78px);
+    max-width: none;
+  }
+
+  .hero-kicker {
+    margin-bottom: 10px;
+    font-size: 10px;
   }
 
   .hero-statement {
-    max-width: none;
     font-size: clamp(22px, 6.4vw, 28px);
     line-height: 1.08;
   }
 
   /* CTA visible dès l'arrivée, pleine largeur : facile à toucher */
   .hero-cta {
-    align-self: stretch;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: max(34px, env(safe-area-inset-bottom));
     justify-content: space-between;
     font-size: 17px;
     padding: .85em 1em .8em;
   }
 
-  /* État de départ de l'animation (statement seulement) */
+  /* État de départ de l'animation (texte seulement) */
   @media (prefers-reduced-motion: no-preference) {
-    .js .hero-statement {
+    .js .hero-say {
       opacity: 0;
       transform: translateY(18px);
     }
@@ -1837,15 +1847,6 @@ main.stack-card,
 
 
 /* =========================================================
-   EASTER EGG : mode négatif ("contre-pied")
-   ========================================================= */
-
-html.is-negative {
-  filter: invert(1);
-}
-
-
-/* =========================================================
    EASTER EGGS
    ========================================================= */
 
@@ -1980,39 +1981,49 @@ html.is-rush .rush-banner-2 {
   width: auto;
 }
 
-/* --- La brigade en cuisine : écran LCD façon Game & Watch --- */
+/* --- Coup de feu : les chefs (tête + corps de stickman) traversent l'écran --- */
 .rush-crew {
   position: fixed;
-  left: 50%;
-  bottom: max(16px, env(safe-area-inset-bottom));
+  inset: 0;
   z-index: 946;
-  width: min(640px, calc(100vw - 24px));
-  padding: 10px;
-  border-radius: 14px;
-  background: #1c1c1c;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, .35);
-  transform: translate(-50%, calc(100% + 40px));
-  transition: transform 380ms var(--ease);
+  overflow: hidden;
   pointer-events: none;
+  visibility: hidden;
 }
 
 html.is-rush .rush-crew {
-  transform: translate(-50%, 0);
+  visibility: visible;
 }
 
-.crew-screen {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  padding: 10px 8px 6px;
-  border-radius: 6px;
-  /* écran LCD gris-vert */
-  background: #c7ccb4;
-  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .25);
+.crew-stage {
+  position: absolute;
+  inset: 0;
 }
 
 .crew-fig {
-  position: relative;
+  position: absolute;
+  left: 0;
+  width: clamp(110px, 13vw, 190px);
+  transform: translateX(-120%);
+}
+
+.crew-fig:nth-child(1) { bottom: 4vh; }
+.crew-fig:nth-child(2) { bottom: 36vh; }
+.crew-fig:nth-child(3) { bottom: 66vh; }
+
+/* chacun traverse l'écran, dans un sens différent, par petits bonds */
+html.is-rush .crew-fig:nth-child(1) { animation: crew-run-r 4.6s steps(24) 200ms both; }
+html.is-rush .crew-fig:nth-child(2) { animation: crew-run-l 4.6s steps(24) 450ms both; }
+html.is-rush .crew-fig:nth-child(3) { animation: crew-run-r 4.6s steps(24) 700ms both; }
+
+@keyframes crew-run-r {
+  from { transform: translateX(-120%); }
+  to   { transform: translateX(calc(100vw + 20%)); }
+}
+
+@keyframes crew-run-l {
+  from { transform: translateX(calc(100vw + 20%)) scaleX(-1); }
+  to   { transform: translateX(-120%) scaleX(-1); }
 }
 
 /* la tête repose sur le cou du stickman */
@@ -2020,17 +2031,14 @@ html.is-rush .rush-crew {
   position: relative;
   z-index: 2;
   display: block;
-  width: 42%;
+  width: 46%;
   height: auto;
   margin: 0 auto;
-  mix-blend-mode: multiply;
-  transform: translateX(0) scale(.25);
-  transform-origin: 50% 100%;
+  filter: drop-shadow(0 0 0 #fff);
 }
 
 html.is-rush .crew-head {
-  animation: e1-grow 520ms cubic-bezier(.3, 1.6, .5, 1) 380ms both,
-             e1-bob 360ms steps(1) 900ms infinite;
+  animation: e1-bob 360ms steps(1) infinite;
 }
 
 .crew-body {
@@ -2055,17 +2063,6 @@ html.is-rush .crew-head {
 .crew-body .fill { fill: #111; stroke: none; }
 .crew-body .steam path { stroke-width: 2.5; }
 
-.crew-name {
-  display: block;
-  margin-top: 2px;
-  text-align: center;
-  font-family: var(--font-text);
-  font-size: 11px;
-  font-weight: 700;
-  color: #111;
-  text-transform: uppercase;
-}
-
 .crew-body g {
   transform-box: fill-box;
 }
@@ -2084,11 +2081,6 @@ html.is-rush .tool-pan .food { animation: gw-food 480ms steps(1) infinite; trans
 html.is-rush .tool-knife { animation: gw-chop 260ms steps(1) infinite; }
 html.is-rush .tool-spoon { animation: gw-stir 400ms steps(1) infinite; }
 html.is-rush .crew-body .steam { animation: gw-steam 400ms steps(1) infinite; }
-
-@keyframes e1-grow {
-  from { transform: scale(.25); }
-  to   { transform: scale(1); }
-}
 
 @keyframes e1-bob {
   0%   { translate: 0 0; }
@@ -2130,20 +2122,14 @@ html.is-rush .crew-body .steam { animation: gw-steam 400ms steps(1) infinite; }
   50%  { opacity: .25; }
 }
 
-@media (max-width: 480px) {
-  .rush-crew {
-    padding: 7px;
-    border-radius: 10px;
-  }
-  .crew-name {
-    font-size: 9px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
+  html.is-rush .crew-fig,
   html.is-rush .crew-head {
     animation: none;
+  }
+  html.is-rush .crew-fig {
     transform: none;
+    left: 40%;
   }
 }
 
@@ -2288,53 +2274,177 @@ html.is-rush .crew-body .steam { animation: gw-steam 400ms steps(1) infinite; }
   will-change: transform;
 }
 
+/* --- Pluie d'assiettes (mobile) : penchez pour débarrasser --- */
+.plate-rain.is-tilt {
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.plate-rain.is-tilt img {
+  left: 0;
+  transform: translateY(-200px);
+}
+
+.tilt-hint {
+  position: absolute;
+  top: 38%;
+  left: 20px;
+  right: 20px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px 11px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.tilt-hint svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  animation: e1-nudge 1s ease-in-out infinite;
+}
+
+@keyframes e1-nudge {
+  50% { transform: translateX(6px); }
+}
+
+/* --- La salière --- */
+.salt {
+  position: fixed;
+  inset: 0;
+  z-index: 960;
+  display: none;
+  cursor: none;
+  touch-action: none;
+}
+
+.salt.is-on { display: block; }
+
+.salt-shaker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .25));
+}
+
+.salt-shaker svg {
+  display: block;
+  width: 40px;
+  height: 56px;
+  transform: rotate(180deg);
+}
+
+.salt-shaker.is-shaking svg {
+  animation: e1-salt 320ms ease-in-out;
+}
+
+@keyframes e1-salt {
+  25% { transform: rotate(160deg) translateY(4px); }
+  60% { transform: rotate(200deg) translateY(-3px); }
+}
+
+.salt-grain {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--white);
+  border: 1px solid var(--black);
+  pointer-events: none;
+}
+
+/* --- La cloche du service --- */
+.bell {
+  position: fixed;
+  left: 50%;
+  bottom: max(28px, env(safe-area-inset-bottom));
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 26px 14px;
+  background: var(--paper-color) var(--paper);
+  border: 2px solid var(--black);
+  box-shadow: 6px 6px 0 var(--black);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 20px);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--ease), visibility 0s linear var(--t-fast);
+}
+
+.bell.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+
+.bell-btn {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--black);
+  cursor: pointer;
+  transform-origin: 50% 90%;
+}
+
+.bell-btn svg {
+  display: block;
+  width: 84px;
+  height: 63px;
+}
+
+.bell-btn.is-ringing {
+  animation: e1-ring 460ms ease-in-out;
+}
+
+@keyframes e1-ring {
+  20% { transform: rotate(-12deg); }
+  45% { transform: rotate(10deg); }
+  70% { transform: rotate(-5deg); }
+}
+
+.bell-text {
+  margin: 0;
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bell-close {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  padding: 2px 6px;
+  border: 0;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bell-btn.is-ringing,
+  .salt-shaker.is-shaking svg,
+  .tilt-hint svg { animation: none; }
+}
+
 /* --- Clin d'œil : une seule paupière --- */
 .eye.is-winking::after {
   animation: e1-blink 420ms ease-in-out;
-}
-
-/* --- 5. Mode croquis : carnet de brief --- */
-html.is-sketch main.stack-card {
-  background:
-    linear-gradient(90deg, transparent 26px, rgba(225, 38, 28, .45) 26px 27px, transparent 27px),
-    repeating-linear-gradient(#fffdf6 0 29px, #cddff0 29px 30px);
-}
-
-html.is-sketch main :is(p, li, h2, h3, .xp-title, .xp-cta) {
-  font-family: var(--font-hand) !important;
-  color: var(--pen);
-}
-
-html.is-sketch main :is(.approche-text, .xp-toggle, .member-role, .member-aka, .member-name) {
-  font-size: 1.25em;
-  line-height: 1.15;
-}
-
-html.is-sketch main .col-title {
-  font-size: 2.1em;
-  text-decoration: line-through var(--pen) 2px;
-}
-
-html.is-sketch main .col-title::after {
-  content: " v2 ?";
-  font-size: .6em;
-  text-decoration: none;
-  display: inline-block;
-  transform: rotate(-6deg);
-}
-
-html.is-sketch .member-photo {
-  box-shadow: 0 0 0 6px #fff, 0 3px 12px rgba(0, 0, 0, .25);
-  transform: rotate(-2.5deg);
-}
-
-html.is-sketch .member:nth-child(2) .member-photo {
-  transform: rotate(2deg);
-}
-
-html.is-sketch .approche-text b {
-  background-image: none;
-  text-decoration: underline wavy var(--pen) 1.5px;
 }
 
 /* Mobile : notification en bas à droite, juste au-dessus du CTA flottant
@@ -2453,19 +2563,14 @@ html.is-sketch .approche-text b {
 
 .chef-bubble {
   position: fixed;
-  top: max(3vh, 16px);
-  bottom: max(3vh, 16px);
-  left: max(3vw, 16px);
-  right: max(3vw, 16px);
+  inset: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 18px clamp(56px, 5vw, 80px) 28px;
-  border: 2px solid var(--black);
+  padding: 0 clamp(64px, 6vw, 96px) 36px;
   background: var(--paper-color) var(--paper);
   color: var(--black);
-  box-shadow: 10px 10px 0 var(--black);
   opacity: 0;
-  transform: scale(.97);
+  transform: translateY(12px);
   transition: opacity var(--t-fast) ease, transform var(--t-base) var(--ease);
 }
 
@@ -2474,14 +2579,14 @@ html.is-sketch .approche-text b {
   transform: none;
 }
 
-/* Flèches pour changer de joueur, sur les côtés */
+/* Flèches pour changer de chef, sur les côtés */
 .chef-arrow {
-  position: absolute;
+  position: fixed;
   top: 50%;
-  z-index: 2;
+  z-index: 3;
   display: inline-flex;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   align-items: center;
   justify-content: center;
   border: 2px solid var(--black);
@@ -2500,45 +2605,68 @@ html.is-sketch .approche-text b {
   color: var(--white);
 }
 
-.chef-prev { left: 8px; }
-.chef-next { right: 8px; }
+.chef-prev { left: 14px; }
+.chef-next { right: 14px; }
 
 .chef-layout {
   display: grid;
-  grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
-  gap: clamp(24px, 3.4vw, 60px);
-  align-items: start;
-  margin-top: 22px;
+  grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: center;
+  min-height: calc(100vh - 110px);
+  padding-top: 20px;
 }
 
-/* La tête en grand, avec un badge façon carte FIFA */
-.chef-visual {
-  position: sticky;
-  top: 0;
+/* La tête, à taille raisonnable, sur un corps de stickman animé */
+.chef-figure {
+  width: min(100%, 320px);
+  margin: 0 auto;
 }
 
 .chef-portrait {
-  width: 100%;
-  max-height: 74vh;
-  object-fit: contain;
-  object-position: top center;
+  display: block;
+  width: 62%;
+  height: auto;
+  margin: 0 auto;
   mix-blend-mode: multiply;
+  position: relative;
+  z-index: 2;
+}
+
+.chef-body .crew-body {
+  margin-top: -49%;
+}
+
+.chef.is-open .chef-body .leg-l   { animation: gw-leg 720ms steps(1) infinite; }
+.chef.is-open .chef-body .leg-r   { animation: gw-leg 720ms steps(1) 360ms infinite; }
+.chef.is-open .chef-body .arm-l   { animation: gw-arm-l 960ms steps(1) infinite; }
+.chef.is-open .chef-body .tool-pan   { animation: gw-flip 960ms steps(1) infinite; }
+.chef.is-open .chef-body .tool-pan .food { animation: gw-food 960ms steps(1) infinite; transform-box: fill-box; }
+.chef.is-open .chef-body .tool-knife { animation: gw-chop 520ms steps(1) infinite; }
+.chef.is-open .chef-body .tool-spoon { animation: gw-stir 800ms steps(1) infinite; }
+.chef.is-open .chef-body .steam      { animation: gw-steam 800ms steps(1) infinite; }
+
+/* Identité à gauche, poste à droite */
+.chef-id {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--black);
 }
 
 .chef-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 8px 12px 6px;
+  align-items: flex-end;
+  padding: 8px 12px 7px;
   border: 2px solid var(--black);
-  background: var(--paper-color);
   font-family: var(--font-title);
   font-weight: 700;
   line-height: 1;
+  text-align: right;
 }
 
 .chef-badge-label {
@@ -2548,55 +2676,17 @@ html.is-sketch .approche-text b {
 }
 
 .chef-pos {
-  margin-top: 3px;
-  max-width: 7em;
-  font-size: 17px;
-  line-height: 1;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-/* Le cycle de travail : chaque poste est une étape, aucun n'est au-dessus */
-.chef-cycle {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 22px;
-  margin: 16px 0 0;
-  padding: 0;
-  list-style: none;
-  font-family: var(--font-text);
-  font-size: 12px;
-  text-transform: uppercase;
-}
-
-.chef-cycle li {
-  position: relative;
-  padding: 4px 8px 3px;
-  border: 1px solid rgba(0, 0, 0, .3);
-  opacity: .55;
-}
-
-.chef-cycle li + li::before {
-  content: "→";
-  position: absolute;
-  left: -17px;
-  top: 3px;
-  color: var(--black);
-  font-weight: 400;
-}
-
-.chef-cycle li.is-current {
-  border-color: var(--black);
-  background: var(--black);
-  color: var(--white);
-  font-weight: 700;
-  opacity: 1;
-}
-
-.note-cycle {
-  margin-top: 1.4em;
+  margin-top: 4px;
+  max-width: 9em;
+  font-size: 16px;
   line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.chef-stats-title span {
+  font-family: var(--font-text);
+  font-weight: 400;
+  text-transform: none;
 }
 
 .chef-stats-title {
@@ -2607,91 +2697,69 @@ html.is-sketch .approche-text b {
   text-transform: uppercase;
 }
 
-.chef-stats-title span {
-  margin-left: 8px;
-  font-family: var(--font-hand);
-  font-size: 17px;
-  color: var(--pen);
-  text-transform: none;
-}
-
-/* Diagramme des points forts */
-.chef-stats {
+/* Ingrédients : barres en pourcentage, lisibles d'un coup d'œil */
+.chef-stat-list {
   display: grid;
-  grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px 32px;
-  align-items: center;
-  margin: 6px 0 6px;
+  margin-top: 10px;
   padding-bottom: 18px;
   border-bottom: 1px solid var(--black);
 }
 
-.chef-radar {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.chef-radar .ring {
-  fill: none;
-  stroke: rgba(0, 0, 0, .18);
-  stroke-width: 1;
-}
-
-.chef-radar .axis {
-  stroke: rgba(0, 0, 0, .18);
-  stroke-width: 1;
-}
-
-.chef-radar .shape {
-  fill: rgba(255, 242, 52, .75);
-  stroke: var(--black);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  transform-origin: 130px 118px;
-  animation: e1-radar 420ms var(--ease) both;
-}
-
-.chef-radar .dot {
-  fill: var(--black);
-}
-
-.chef-radar text {
-  font-family: var(--font-title);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  fill: var(--black);
-}
-
-@keyframes e1-radar {
-  from { transform: scale(.15); opacity: 0; }
-  to   { transform: scale(1); opacity: 1; }
-}
-
-.chef-stat-list li {
+.stat-top {
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
-  padding: 5px 0;
-  border-bottom: 1px dashed rgba(0, 0, 0, .25);
   font-family: var(--font-text);
-  font-size: 14px;
+  font-size: 13px;
 }
 
-.chef-stat-list b {
-  min-width: 2ch;
+.stat-top b {
   font-family: var(--font-title);
-  font-size: 20px;
+  font-size: 15px;
 }
 
-/* Desktop : les rubriques sur deux colonnes */
+.stat-bar {
+  display: block;
+  height: 8px;
+  margin-top: 5px;
+  border: 1.5px solid var(--black);
+  background: transparent;
+}
+
+.stat-bar span {
+  display: block;
+  height: 100%;
+  width: var(--v, 0%);
+  background: var(--fluo);
+  border-right: 1.5px solid var(--black);
+  animation: e1-fill 520ms var(--ease) both;
+}
+
+@keyframes e1-fill {
+  from { width: 0; }
+  to   { width: var(--v, 0%); }
+}
+
+/* Desktop : rubriques sur deux colonnes, grand nom */
 @media (min-width: 641px) {
+  .chef .chef-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding-top: 16px;
+    background: var(--paper-color);
+  }
+
   .chef .chef-name {
     font-size: clamp(44px, 5vw, 76px);
   }
 
   .chef .chef-role {
+    margin-top: .6em;
+    padding-bottom: 0;
+    border-bottom: 0;
     font-size: 18px;
   }
 
@@ -2706,22 +2774,27 @@ html.is-sketch .approche-text b {
   }
 }
 
-/* Mobile : panneau en bas de l'écran, à portée de pouce */
+/* Mobile : panneau en bas, barre des chefs figée en haut du panneau */
 @media (max-width: 640px) {
   .chef-bubble {
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    max-height: 70dvh;
-    padding: 12px var(--gutter) max(20px, env(safe-area-inset-bottom));
-    border-width: 2px 0 0;
+    inset: auto 0 0 0;
+    max-height: 72dvh;
+    padding: 0 var(--gutter) max(20px, env(safe-area-inset-bottom));
+    border-top: 2px solid var(--black);
     box-shadow: 0 -10px 30px rgba(0, 0, 0, .25);
     transform: translateY(100%);
   }
 
   .chef.is-open .chef-bubble {
     transform: none;
+  }
+
+  .chef .chef-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding-top: 12px;
+    background: var(--paper-color);
   }
 
   .chef-arrow,
@@ -2731,27 +2804,180 @@ html.is-sketch .approche-text b {
 
   .chef-layout {
     display: block;
-    margin-top: 0;
+    min-height: 0;
+    padding-top: 0;
   }
 
-  .chef-stats {
-    grid-template-columns: minmax(0, 190px) minmax(0, 1fr);
-    gap: 6px 14px;
+  .chef .chef-role {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
-  .chef-stat-list li {
-    font-size: 11px;
-    gap: 8px;
+  .chef-badge {
+    padding: 6px 8px 5px;
   }
 
-  .chef-stat-list b {
-    font-size: 15px;
+  .chef-pos {
+    font-size: 12px;
+  }
+
+  .chef-stat-list {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 380px) {
-  .chef-stats {
+/* =========================================================
+   LA MÉTHODE — de l'idée à la diffusion
+   ========================================================= */
+
+.method {
+  padding: clamp(10px, 2vw, 30px) var(--gutter) clamp(70px, 7vw, 120px);
+}
+
+.method-head {
+  display: grid;
+  grid-template-columns: minmax(0, 27fr) minmax(0, 74fr);
+  column-gap: clamp(40px, 6.3vw, 110px);
+  align-items: baseline;
+  padding-top: clamp(36px, 4vw, 60px);
+  border-top: 1px solid var(--black);
+}
+
+.method-intro {
+  max-width: 62ch;
+  font-size: clamp(13px, 1.02vw, 17px);
+  line-height: 1.4;
+}
+
+/* Fiche : où le chef intervient dans la méthode */
+.chef-cycle {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+  counter-reset: cyc;
+}
+
+.chef-cycle li {
+  counter-increment: cyc;
+  padding: 8px 9px 9px;
+  border: 1px solid var(--black);
+  color: rgba(0, 0, 0, .45);
+  border-color: rgba(0, 0, 0, .25);
+}
+
+.chef-cycle li::before {
+  content: "0" counter(cyc);
+  display: block;
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.chef-cycle b {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.chef-cycle span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-text);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.chef-cycle li.is-current {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--white);
+}
+
+@media (max-width: 900px) {
+  .chef-cycle { grid-template-columns: 1fr; gap: 3px; }
+  .chef-cycle li {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    align-items: baseline;
+    gap: 8px;
+    padding: 7px 10px;
+  }
+  .chef-cycle span { margin: 0; text-align: right; }
+}
+
+
+.method-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 32px);
+  margin: clamp(28px, 3vw, 48px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  padding-top: 14px;
+  border-top: 2px solid var(--black);
+}
+
+.step-n {
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step-name {
+  margin-top: 6px;
+  font-family: var(--font-title);
+  font-size: clamp(18px, 1.5vw, 24px);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.step-pro {
+  margin-top: 6px;
+  font-family: var(--font-title);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.step-text {
+  margin-top: 10px;
+  font-size: clamp(12px, .9vw, 14px);
+  line-height: 1.4;
+}
+
+.step-who {
+  margin-top: 10px;
+  font-family: var(--font-hand);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--pen);
+}
+
+@media (max-width: 900px) {
+  .method-head {
     grid-template-columns: 1fr;
+    row-gap: 12px;
+  }
+
+  .method-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .method-steps {
+    grid-template-columns: 1fr;
+    gap: 22px;
   }
 }
 

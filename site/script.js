@@ -31,13 +31,20 @@
       clocks[i].textContent = "PARIS, FR  " + time;
     }
 
-    // Easter egg : entre minuit et 6 h (heure de Paris), service de nuit
-    var night = parseInt(time.slice(0, 2), 10) < 6;
+    // Comme un restaurant : le bandeau suit l'heure de Paris
+    var label = serviceLabel(parseInt(time.slice(0, 2), 10));
     document.querySelectorAll(".open-label").forEach(function (open) {
       if (open.hasAttribute("data-force")) return;
-      var label = night ? "Service de nuit." : "La cuisine est ouverte.";
       if (open.textContent !== label) open.textContent = label;
     });
+  }
+
+  function serviceLabel(h) {
+    if (h >= 23 || h < 6) return "Service de nuit.";
+    if (h < 11) return "Mise en place.";
+    if (h < 15) return "Service du midi.";
+    if (h < 19) return "La cuisine est ouverte.";
+    return "Service du soir.";
   }
 
   updateClocks();
@@ -67,7 +74,7 @@
   var typo = hero && hero.querySelector(".m-typo");
   var bar = hero && hero.querySelector(".m-bar");
   var topBar = hero && hero.querySelector(".hero-top");
-  var statement = hero && hero.querySelector(".hero-statement");
+  var statement = hero && hero.querySelector(".hero-say");
   var cta = hero && hero.querySelector(".hero-cta");
 
   var mqMobile = window.matchMedia("(max-width: 480px)");
@@ -638,6 +645,240 @@
     setTimeout(function () { busy = false; }, duration);
   }
 
+  /* --- La salière : on assaisonne soi-même (clic / toucher) --- */
+  var saltEl = document.querySelector(".salt");
+  var shaker = saltEl && saltEl.querySelector(".salt-shaker");
+  var saltPinches = 0;
+  var saltIdle = null;
+
+  function placeShaker(x, y) {
+    shaker.style.transform = "translate(" + (x - 20) + "px," + (y - 60) + "px)";
+    shaker.setAttribute("data-x", x);
+    shaker.setAttribute("data-y", y);
+  }
+
+  function sprinkle(x, y) {
+    shaker.classList.remove("is-shaking");
+    void shaker.offsetWidth;
+    shaker.classList.add("is-shaking");
+    for (var i = 0; i < 9; i++) {
+      var g = document.createElement("span");
+      g.className = "salt-grain";
+      g.style.left = (x - 2 + (Math.random() * 14 - 7)) + "px";
+      g.style.top = (y - 6) + "px";
+      saltEl.appendChild(g);
+      var dx = Math.random() * 50 - 25;
+      var dy = 60 + Math.random() * 90;
+      var anim = g.animate([
+        { transform: "translate(0,0)", opacity: 1 },
+        { transform: "translate(" + dx + "px," + dy + "px)", opacity: 0 }
+      ], { duration: 700 + Math.random() * 400, easing: "cubic-bezier(.3,0,.8,.6)", fill: "forwards" });
+      anim.onfinish = (function (el) { return function () { el.remove(); }; })(g);
+    }
+    saltPinches += 1;
+    if (saltPinches === 6) stopSalt(true);
+    else armSaltIdle();
+  }
+
+  function armSaltIdle() {
+    clearTimeout(saltIdle);
+    saltIdle = setTimeout(function () { stopSalt(false); }, 6000);
+  }
+
+  function onSaltMove(event) { placeShaker(event.clientX, event.clientY); }
+  function onSaltDown(event) {
+    event.preventDefault();
+    placeShaker(event.clientX, event.clientY);
+    sprinkle(event.clientX, event.clientY);
+  }
+  function onSaltKey(event) { if (event.key === "Escape") stopSalt(false); }
+
+  function startSalt() {
+    if (!saltEl || saltEl.classList.contains("is-on")) return;
+    saltPinches = 0;
+    placeShaker(window.innerWidth / 2, window.innerHeight * 0.45);
+    saltEl.classList.add("is-on");
+    saltEl.addEventListener("pointermove", onSaltMove);
+    saltEl.addEventListener("pointerdown", onSaltDown);
+    document.addEventListener("keydown", onSaltKey);
+    toast(canHover ? "À vous de doser : cliquez pour saler." : "À vous de doser : touchez l’écran pour saler.");
+    armSaltIdle();
+  }
+
+  function stopSalt(done) {
+    if (!saltEl) return;
+    clearTimeout(saltIdle);
+    saltEl.removeEventListener("pointermove", onSaltMove);
+    saltEl.removeEventListener("pointerdown", onSaltDown);
+    document.removeEventListener("keydown", onSaltKey);
+    setTimeout(function () { saltEl.classList.remove("is-on"); }, done ? 700 : 0);
+    if (done) toast("Chaque marque a son dosage. Le vôtre ?", { label: "Parlons projet", onClick: openFormNow });
+  }
+
+  /* --- La cloche du service : sonnez 3 fois, la commande part --- */
+  var bellEl = document.querySelector(".bell");
+  var bellRings = 0;
+  var audioCtx = null;
+
+  function ding() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var t = audioCtx.currentTime;
+      [1760, 2640].forEach(function (f, i) {
+        var o = audioCtx.createOscillator();
+        var v = audioCtx.createGain();
+        o.frequency.value = f;
+        v.gain.setValueAtTime(i ? 0.04 : 0.12, t);
+        v.gain.exponentialRampToValueAtTime(0.0001, t + 1.1);
+        o.connect(v).connect(audioCtx.destination);
+        o.start(t);
+        o.stop(t + 1.2);
+      });
+    } catch (e) {}
+  }
+
+  function setBell(open) {
+    if (!bellEl) return;
+    bellEl.classList.toggle("is-open", open);
+    bellEl.setAttribute("aria-hidden", open ? "false" : "true");
+  }
+
+  function startBell() {
+    if (!bellEl) return;
+    bellRings = 0;
+    bellEl.querySelector(".bell-text").textContent = "Sonnez 3 fois";
+    setBell(true);
+    bellEl.querySelector(".bell-btn").focus({ preventScroll: true });
+  }
+
+  if (bellEl) {
+    bellEl.querySelector(".bell-btn").addEventListener("click", function () {
+      if (bellRings >= 3) return;
+      var btn = this;
+      btn.classList.remove("is-ringing");
+      void btn.offsetWidth;
+      btn.classList.add("is-ringing");
+      ding();
+      bellRings += 1;
+      var text = bellEl.querySelector(".bell-text");
+      if (bellRings < 3) {
+        text.textContent = "Encore " + (3 - bellRings);
+        return;
+      }
+      text.textContent = "Service !";
+      wake(faces, 150);
+      setTimeout(function () {
+        setBell(false);
+        toast("Commande envoyée en cuisine. La vôtre ?", { label: "Parlons projet", onClick: openFormNow });
+      }, 900);
+    });
+    bellEl.querySelector(".bell-close").addEventListener("click", function () { setBell(false); });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") setBell(false);
+    });
+  }
+
+  /* --- Pluie d'assiettes, version téléphone : on penche pour débarrasser --- */
+  var tiltOn = false;
+
+  function startTiltRain() {
+    if (tiltOn) return;
+    tiltOn = true;
+
+    var layer = document.createElement("div");
+    layer.className = "plate-rain is-tilt";
+    var hint = document.createElement("p");
+    hint.className = "tilt-hint";
+    hint.innerHTML = "Penchez le téléphone vers la droite pour débarrasser la table" +
+      '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"/></svg>';
+    layer.appendChild(hint);
+    document.body.appendChild(layer);
+
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var plates = [];
+    for (var i = 0; i < 18; i++) {
+      var img = document.createElement("img");
+      img.src = "assets/web/logo-icon-b.webp";
+      img.alt = "";
+      var size = 44 + Math.random() * 40;
+      img.style.width = size + "px";
+      layer.appendChild(img);
+      plates.push({
+        el: img, size: size,
+        x: size / 2 + Math.random() * (vw - size),
+        y: -size - Math.random() * vh * 0.8,
+        vx: 0, vy: 0, r: Math.random() * 360,
+        floor: vh - size - Math.random() * 46
+      });
+    }
+
+    // Gyroscope : iOS demande l'autorisation (dans le geste de l'utilisateur)
+    var gamma = 0;
+    var gotTilt = false;
+    function onTilt(event) {
+      if (event.gamma === null) return;
+      gotTilt = true;
+      gamma = event.gamma;
+    }
+    var D = window.DeviceOrientationEvent;
+    if (D && typeof D.requestPermission === "function") {
+      D.requestPermission().then(function (state) {
+        if (state === "granted") window.addEventListener("deviceorientation", onTilt);
+      }).catch(function () {});
+    } else if (D) {
+      window.addEventListener("deviceorientation", onTilt);
+    }
+
+    // Sans gyroscope : on glisse du doigt vers la droite
+    var push = 0;
+    var sx = null;
+    setTimeout(function () {
+      if (!gotTilt && tiltOn) hint.firstChild.textContent = "Glissez vers la droite pour débarrasser la table";
+    }, 2500);
+    layer.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    layer.addEventListener("touchmove", function (e) {
+      if (sx === null) return;
+      var dx = e.touches[0].clientX - sx;
+      sx = e.touches[0].clientX;
+      if (dx > 0) push = Math.min(2.4, push + dx * 0.05);
+    }, { passive: true });
+    layer.addEventListener("touchend", function () { sx = null; });
+
+    var start = performance.now();
+    function frame(now) {
+      var auto = now - start > 25000 ? 1.2 : 0; // au bout de 25 s, la table se débarrasse seule
+      var ax = gamma > 10 ? (gamma - 10) * 0.03 : gamma < -10 ? (gamma + 10) * 0.03 : 0;
+      ax += push + auto;
+      push *= 0.9;
+      var left = 0;
+      plates.forEach(function (p) {
+        if (p.gone) return;
+        p.vy += 0.7;
+        p.y += p.vy;
+        if (p.y >= p.floor) {
+          p.y = p.floor;
+          p.vy = Math.abs(p.vy) > 3 ? -p.vy * 0.35 : 0;
+          p.vx = (p.vx + ax) * 0.93;
+        } else {
+          p.vx += ax * 0.4;
+        }
+        p.x += p.vx;
+        if (p.x < p.size / 2) { p.x = p.size / 2; p.vx = -p.vx * 0.3; }
+        p.r += p.vx * 1.6;
+        if (p.x - p.size / 2 > vw) { p.gone = true; p.el.remove(); return; }
+        left += 1;
+        p.el.style.transform = "translate(" + (p.x - p.size / 2).toFixed(1) + "px," + p.y.toFixed(1) + "px) rotate(" + p.r.toFixed(1) + "deg)";
+      });
+      if (left) { requestAnimationFrame(frame); return; }
+      window.removeEventListener("deviceorientation", onTilt);
+      layer.remove();
+      tiltOn = false;
+      toast("Table débarrassée. Merci !");
+    }
+    requestAnimationFrame(frame);
+  }
+
   var eggs = {
 
     /* 1. COUP DE FEU — toute la page s'emballe 5 s */
@@ -673,6 +914,7 @@
 
     /* 3. PLUIE D'ASSIETTES — l'icône tombe par dizaines et rebondit */
     pluie: function () {
+      if (mqMobile.matches && !mqReduce.matches) { startTiltRain(); return; }
       exclusive(4000, function () {
         if (mqReduce.matches) { toast("Attention, ça glisse !"); return; }
         var rain = document.createElement("div");
@@ -706,41 +948,11 @@
       });
     },
 
-    /* 4. LA BRIGADE EN CUISINE — ils "chantent" à tour de rôle */
-    brigade: function () {
-      exclusive(4200, function () {
-        goToBrigade();
-        toast("La brigade donne de la voix.");
-        var order = [faceOf("johan"), faceOf("pierre"), faceOf("charles")];
-        [0, 1].forEach(function (round) {
-          var base = 700 + round * 1700;
-          order.forEach(function (list, i) {
-            setTimeout(function () { wake(list); }, base + i * 420);
-          });
-          setTimeout(function () { faces.forEach(blink); }, base + 1300);
-        });
-      });
-    },
+    /* 4. LA SALIÈRE — on assaisonne la page soi-même */
+    saliere: function () { startSalt(); },
 
-    /* 5. MODE CROQUIS — le site redevient un carnet de brief, 8 s */
-    croquis: function () {
-      exclusive(8200, function () {
-        document.documentElement.classList.add("is-sketch");
-        setStick();
-        toast("Mode croquis : on repasse au brouillon.");
-        setTimeout(function () {
-          document.documentElement.classList.remove("is-sketch");
-          setStick();
-          toast("Retour au propre.");
-        }, 8000);
-      });
-    },
-
-    /* Bonus — mode négatif ("contre-pied") */
-    negatif: function () {
-      var on = document.documentElement.classList.toggle("is-negative");
-      toast(on ? "Mode négatif : on prend le contre-pied." : "Retour en cuisine.");
-    },
+    /* 5. LA CLOCHE DU SERVICE — sonnez 3 fois, la commande part */
+    cloche: function () { startBell(); },
 
     /* Bonus — la brigade vous fait un clin d'œil */
     clin: function () {
@@ -774,7 +986,7 @@
       if (!open) return;
       open.setAttribute("data-force", "1");
       open.textContent = "Service de nuit.";
-      toast("Revenez après minuit, c’est pareil.");
+      toast("De 23 h à 6 h, la cuisine tourne encore.");
       setTimeout(function () { open.removeAttribute("data-force"); }, 4000);
     },
 
@@ -788,7 +1000,7 @@
   };
 
   /* --- Suivi des effets "goûtés" (mémorisé sur cet appareil) --- */
-  var MENU = ["rush", "clin", "plat", "brigade", "negatif", "pluie", "croquis", "bout", "chef", "nuit"];
+  var MENU = ["rush", "clin", "plat", "saliere", "cloche", "pluie", "bout", "chef", "nuit"];
   var found = [];
   try { found = JSON.parse(localStorage.getItem("e1-eggs") || "[]"); } catch (e) { found = []; }
 
@@ -844,8 +1056,8 @@
   document.querySelectorAll(".carte-item").forEach(function (item) {
     item.addEventListener("click", function () {
       var name = item.getAttribute("data-run");
-      // sur mobile, on referme la carte pour laisser voir l'effet
-      if (mqMobile.matches || name === "brigade" || name === "bout" || name === "nuit") setCarte(false);
+      // on referme la carte pour laisser voir l'effet
+      setCarte(false);
       run(name);
     });
   });
@@ -904,16 +1116,16 @@
         setTimeout(function () { track.style.animationDuration = ""; }, 3000);
       }
     },
-    sel:     function () { replayMarks(); toast("Une pincée de sel… et on relit."); },
+    sel:     function () { run("saliere"); },
+    cloche:  function () { run("cloche"); },
     miam:    function () { wake(faces, 60); toast("Merci, on transmet en cuisine."); },
     hello:   function () { wake(faces, 90); toast("Hello ! On vous écoute."); },
     plat:    function () { run("plat"); },
-    croquis: function () { run("croquis"); },
     feu:     function () { run("rush"); }
   };
 
   // Code secret ↑ ↑ ↓ ↓ : les 5 effets, chacun son tour
-  var konamiCycle = ["rush", "plat", "pluie", "brigade", "croquis"];
+  var konamiCycle = ["rush", "plat", "pluie", "saliere", "cloche"];
   var konamiIndex = 0;
 
   var typedWords = "";
@@ -943,14 +1155,7 @@
     });
   });
 
-  // 4. Au toucher (mobile) : "les chefs !" fait parler la brigade,
-  //    l'icône du hero fait un coup de poêle
-  var chefsNote = document.querySelector(".note-inline");
-  if (chefsNote) {
-    chefsNote.style.cursor = "pointer";
-    chefsNote.addEventListener("click", function () { run("chef"); });
-  }
-
+  // 4. Au toucher : l'icône du hero fait un coup de poêle
   var tosses = 0;
   if (icon) {
     icon.addEventListener("click", function () {
@@ -1017,52 +1222,29 @@
     chef.querySelector(".chef-pos").innerHTML = mb.getAttribute("data-pos") || "";
     chef.querySelectorAll(".chef-cycle li").forEach(function (li) {
       var k = li.getAttribute("data-k");
-      li.classList.toggle("is-current", k === "all" || parseInt(k, 10) === chefIndex);
+      li.classList.toggle("is-current", k === "all" || k.split(",").indexOf(String(chefIndex)) !== -1);
     });
 
-    // Ingrédients : diagramme (dosage) + liste
+    // Le corps en stickman animé, sous le portrait
+    var crew = document.querySelectorAll(".crew-fig .crew-body")[chefIndex];
+    var body = chef.querySelector(".chef-body");
+    body.innerHTML = "";
+    if (crew) body.appendChild(crew.cloneNode(true));
+
+    // Ingrédients : le dosage de chacun, en %
     var stats = (mb.getAttribute("data-stats") || "").split("|").map(function (pair) {
       var p = pair.split(":");
       return { label: p[0], value: parseInt(p[1], 10) };
     });
-    drawRadar(chef.querySelector(".chef-radar"), stats);
     chef.querySelector(".chef-stat-list").innerHTML = stats.map(function (st) {
-      return "<li><b>" + st.value + "</b>" + st.label + "</li>";
+      return '<li><div class="stat-top"><span>' + st.label + "</span><b>" + st.value + ' %</b></div>' +
+        '<span class="stat-bar"><span style="--v:' + st.value + '%"></span></span></li>';
     }).join("");
 
     bubble.scrollTop = 0;
 
     var face = mb.querySelector(".face");
     if (face) { blink(face); talk(face); }
-  }
-
-  // Radar des points forts (échelle 50 → 100, comme une carte FIFA)
-  function drawRadar(svg, stats) {
-    var cx = 130, cy = 118, R = 82, n = stats.length;
-    var html = "";
-    var pt = function (k, r) {
-      var a = -Math.PI / 2 + k * 2 * Math.PI / n;
-      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
-    };
-    [0.34, 0.67, 1].forEach(function (f) {
-      var ring = [];
-      for (var k = 0; k < n; k++) ring.push(pt(k, R * f).map(function (v) { return v.toFixed(1); }).join(","));
-      html += '<polygon class="ring" points="' + ring.join(" ") + '"/>';
-    });
-    var shape = [], dots = "", labels = "";
-    stats.forEach(function (st, k) {
-      var edge = pt(k, R);
-      html += '<line class="axis" x1="' + cx + '" y1="' + cy + '" x2="' + edge[0].toFixed(1) + '" y2="' + edge[1].toFixed(1) + '"/>';
-      var r = R * Math.max(0.08, (st.value - 50) / 50);
-      var p = pt(k, r);
-      shape.push(p[0].toFixed(1) + "," + p[1].toFixed(1));
-      dots += '<circle class="dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3"/>';
-      // la note au bout de chaque branche (les libellés sont dans la liste à côté)
-      var l = pt(k, R + 14);
-      labels += '<text x="' + l[0].toFixed(1) + '" y="' + (l[1] + 4).toFixed(1) + '" text-anchor="middle">' + st.value + '</text>';
-    });
-    html += '<polygon class="shape" points="' + shape.join(" ") + '"/>' + dots + labels;
-    svg.innerHTML = html;
   }
 
   function openChef(i) {
