@@ -404,6 +404,11 @@ body.e1-form-open {
   transform-origin: 100% 50%;
 }
 
+.note-method {
+  margin-top: 1.6em;
+  line-height: 1.05;
+}
+
 .note-left {
   padding: 0 0 0 8%;
   text-align: left;
