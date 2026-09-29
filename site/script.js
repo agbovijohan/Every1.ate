@@ -3,8 +3,9 @@
    Une seule logique par fonction :
    1. Horloge Paris
    2. Scroll : animation Hero mobile + indicateur de défilement
-   3. Apparitions au scroll
-   4. Formulaire "Parlons projet" (+ validation instantanée)
+   3. Apparitions au scroll + surlignage
+   4. Visages de la brigade (pupilles, clignements, bouche)
+   5. Formulaire "Parlons projet" (+ validation instantanée)
    ========================================================= */
 
 (function () {
@@ -224,9 +225,161 @@
     reveals.forEach(function (el) { el.classList.add("is-in"); });
   }
 
+  /* Surlignage : déclenché quand le paragraphe arrive au milieu de l'écran */
+  var marks = document.querySelectorAll("[data-mark]");
+
+  if ("IntersectionObserver" in window && !mqReduce.matches) {
+    var ioMark = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          ioMark.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -30% 0px" });
+
+    marks.forEach(function (el) { ioMark.observe(el); });
+  } else {
+    marks.forEach(function (el) { el.classList.add("is-in"); });
+  }
+
 
   /* =======================================================
-     4. FORMULAIRE "PARLONS PROJET"
+     4. VISAGES DE LA BRIGADE
+     -------------------------------------------------------
+     Souris  : les pupilles suivent le curseur ; au survol, le
+               visage cligne des yeux et "parle".
+     Tactile : clignement + bouche à l'arrivée à l'écran,
+               puis regards et clignements de temps en temps.
+     Tout est coupé si "animations réduites" est activé.
+     ======================================================= */
+
+  var faces = Array.prototype.slice.call(document.querySelectorAll(".face"));
+  var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  function replay(face, cls, ms) {
+    face.classList.remove(cls);
+    void face.offsetWidth; // relance l'animation
+    face.classList.add(cls);
+    setTimeout(function () { face.classList.remove(cls); }, ms);
+  }
+
+  function blink(face) { replay(face, "is-blinking", 260); }
+  function talk(face) { replay(face, "is-talking", 580); }
+
+  function look(face, x, y) {
+    face.querySelectorAll(".eye").forEach(function (eye) {
+      eye.style.setProperty("--px", x.toFixed(2) + "px");
+      eye.style.setProperty("--py", y.toFixed(2) + "px");
+    });
+  }
+
+  if (faces.length && !mqReduce.matches) {
+
+    var visible = new Set();
+
+    if ("IntersectionObserver" in window) {
+      var ioFace = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            if (!visible.has(entry.target) && !canHover) {
+              // tactile : petit "bonjour" à l'arrivée
+              blink(entry.target);
+              talk(entry.target);
+            }
+            visible.add(entry.target);
+          } else {
+            visible.delete(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      faces.forEach(function (face) { ioFace.observe(face); });
+    } else {
+      faces.forEach(function (face) { visible.add(face); });
+    }
+
+    // Clignements naturels, à intervalles irréguliers
+    faces.forEach(function (face, i) {
+      (function loop() {
+        setTimeout(function () {
+          if (visible.has(face) && !document.hidden) blink(face);
+          loop();
+        }, 2600 + Math.random() * 3400 + i * 400);
+      })();
+    });
+
+    if (canHover) {
+      // Survol : clignement + bouche
+      faces.forEach(function (face) {
+        face.parentNode.addEventListener("mouseenter", function () {
+          blink(face);
+          talk(face);
+        });
+      });
+
+      // Pupilles qui suivent le curseur (1 calcul par image)
+      var pointer = null;
+      var lookTicking = false;
+
+      var followPointer = function () {
+        lookTicking = false;
+        visible.forEach(function (face) {
+          face.querySelectorAll(".eye").forEach(function (eye) {
+            var r = eye.getBoundingClientRect();
+            var max = r.width * 0.16;
+            var x = 0, y = 0;
+            if (pointer) {
+              var dx = pointer.x - (r.left + r.width / 2);
+              var dy = pointer.y - (r.top + r.height / 2);
+              var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+              var k = Math.min(1, dist / 220);
+              x = dx / dist * max * k;
+              y = dy / dist * max * k * 0.6;
+            }
+            eye.style.setProperty("--px", x.toFixed(2) + "px");
+            eye.style.setProperty("--py", y.toFixed(2) + "px");
+          });
+        });
+      };
+
+      var requestLook = function () {
+        if (!lookTicking) {
+          lookTicking = true;
+          window.requestAnimationFrame(followPointer);
+        }
+      };
+
+      document.addEventListener("pointermove", function (e) {
+        if (e.pointerType !== "mouse") return;
+        pointer = { x: e.clientX, y: e.clientY };
+        requestLook();
+      }, { passive: true });
+
+      document.documentElement.addEventListener("mouseleave", function () {
+        pointer = null;
+        requestLook();
+      });
+    } else {
+      // Tactile : regards furtifs de temps en temps
+      faces.forEach(function (face) {
+        (function wander() {
+          setTimeout(function () {
+            if (visible.has(face)) {
+              var w = face.querySelector(".eye").getBoundingClientRect().width * 0.16;
+              look(face, (Math.random() * 2 - 1) * w, (Math.random() * 2 - 1) * w * 0.5);
+              setTimeout(function () { look(face, 0, 0); }, 1100);
+            }
+            wander();
+          }, 3500 + Math.random() * 4000);
+        })();
+      });
+    }
+  }
+
+
+  /* =======================================================
+     5. FORMULAIRE "PARLONS PROJET"
      ======================================================= */
 
   var overlay = document.getElementById("e1-project-overlay");

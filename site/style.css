@@ -32,6 +32,9 @@
   /* Durées d'animation : courtes, pour guider sans ralentir */
   --t-fast: 200ms;
   --t-base: 300ms;
+
+  /* Couleur du surlignage (Notre approche) */
+  --mark: #e4e0d4;
 }
 
 *,
@@ -351,6 +354,31 @@ body.e1-form-open {
   font-weight: 700;
 }
 
+/* --- Surlignage : un "feutre" passe sur les mots clés ---
+   Un fond de couleur dont la largeur passe de 0 % à 100 %.
+   Sur plusieurs lignes, le trait avance ligne après ligne. */
+.approche-text b {
+  padding: 0 .12em;
+  margin: 0 -.12em;
+  background-image: linear-gradient(var(--mark), var(--mark));
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 100% 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .approche-text b {
+    background-size: 0% 100%;
+    transition: background-size 550ms var(--ease);
+  }
+  .js .approche-text.is-in b {
+    background-size: 100% 100%;
+  }
+  .js .approche-text.is-in b:nth-of-type(2) {
+    transition-delay: 350ms;
+  }
+}
+
 .expertises {
   font-size: clamp(14px, 1.2vw, 20px);
   line-height: 1.3;
@@ -382,15 +410,109 @@ body.e1-form-open {
   background: var(--white);
 }
 
-.member-photo img {
-  width: 100%;
+/* --- Visage : calque aux proportions exactes du portrait,
+   centré et rogné comme un "object-fit: cover" → les yeux et la
+   bouche restent alignés à toutes les tailles d'écran. --- */
+.face {
+  position: absolute;
+  top: 0;
+  left: 50%;
   height: 100%;
-  object-fit: cover;
+  aspect-ratio: var(--ar);
+  transform: translateX(-50%);
   transition: transform var(--t-base) var(--ease);
 }
 
-.member-photo:hover img {
-  transform: scale(1.035);
+.face img {
+  width: 100%;
+  height: 100%;
+}
+
+.member-photo {
+  position: relative;
+}
+
+.member-photo:hover .face {
+  transform: translateX(-50%) scale(1.035);
+}
+
+/* Fenêtre ovale à bords doux posée sur l'œil / la bouche.
+   --x --y : centre (en % du portrait) · --w --h : taille (en %) */
+.eye,
+.mouth {
+  position: absolute;
+  left: calc((var(--x) - var(--w) / 2) * 1%);
+  top: calc((var(--y) - var(--h) / 2) * 1%);
+  width: calc(var(--w) * 1%);
+  height: calc(var(--h) * 1%);
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 68%, transparent);
+  mask-image: radial-gradient(closest-side, #000 68%, transparent);
+}
+
+/* Copie du portrait, alignée pile sous la fenêtre */
+.eye > span,
+.mouth > span {
+  position: absolute;
+  left: calc((var(--w) / 2 - var(--x)) * 100% / var(--w));
+  top: calc((var(--h) / 2 - var(--y)) * 100% / var(--h));
+  width: calc(10000% / var(--w));
+  height: calc(10000% / var(--h));
+  background: var(--src) 0 0 / 100% 100% no-repeat;
+}
+
+/* Pupilles : la copie glisse de quelques pixels (--px, --py) */
+.eye > span {
+  transform: translate(var(--px, 0px), var(--py, 0px));
+  transition: transform 140ms ease-out;
+}
+
+/* Paupière : descend puis remonte */
+.eye::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 62%;
+  /* peau blanche + trait de cils noir, au milieu de l'œil une fois fermé */
+  background: linear-gradient(var(--white) 0 76%, var(--black) 76% 100%);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+
+.face.is-blinking .eye::after {
+  animation: e1-blink 240ms ease-in-out;
+}
+
+@keyframes e1-blink {
+  0%, 100% { transform: scaleY(0); }
+  40%, 60% { transform: scaleY(1); }
+}
+
+/* Bouche : s'étire et se referme, comme une phrase */
+.mouth > span {
+  transform-origin: calc(var(--x) * 1%) calc(var(--y) * 1%);
+}
+
+.face.is-talking .mouth > span {
+  animation: e1-talk 560ms ease-in-out;
+}
+
+@keyframes e1-talk {
+  0%, 100% { transform: scaleY(1); }
+  20%      { transform: scaleY(1.38); }
+  40%      { transform: scaleY(.9); }
+  62%      { transform: scaleY(1.26); }
+  82%      { transform: scaleY(.97); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eye,
+  .mouth {
+    display: none;
+  }
 }
 
 .member-name,
