@@ -30,6 +30,14 @@
     for (var i = 0; i < clocks.length; i++) {
       clocks[i].textContent = "PARIS, FR  " + time;
     }
+
+    // Easter egg : entre minuit et 6 h (heure de Paris), service de nuit
+    var open = document.getElementById("hero-open");
+    if (open) {
+      var night = parseInt(time.slice(0, 2), 10) < 6;
+      var label = night ? "Service de nuit." : "La cuisine est ouverte.";
+      if (open.textContent !== label) open.textContent = label;
+    }
   }
 
   updateClocks();
@@ -142,6 +150,7 @@
       "scale(" + lerp(1, m.endScale, a).toFixed(4) + ")";
 
     typo.style.opacity = (1 - clamp(a * 1.6)).toFixed(3);
+    typo.style.pointerEvents = a > 0.4 ? "none" : "";
     typo.style.transform = "translate(-50%, " + (-a * 20).toFixed(2) + "px)";
 
     topBar.style.opacity = (1 - clamp(a * 2)).toFixed(3);
@@ -165,10 +174,27 @@
   }
 
   /* Une seule boucle de scroll pour tout (1 calcul par image) */
+  /* CTA flottant : après le hero, masqué dès que le footer arrive */
+  var floatCta = document.querySelector(".float-cta");
+  var footerEl = document.getElementById("footer");
+
+  function renderFloat() {
+    if (!floatCta || !hero || !footerEl) return;
+    var show = window.scrollY > hero.offsetHeight * 0.8 &&
+               footerEl.getBoundingClientRect().top > window.innerHeight * 0.85 &&
+               !document.body.classList.contains("e1-form-open");
+    if (show !== floatCta.classList.contains("is-visible")) {
+      floatCta.classList.toggle("is-visible", show);
+      floatCta.setAttribute("aria-hidden", show ? "false" : "true");
+      floatCta.tabIndex = show ? 0 : -1;
+    }
+  }
+
   function frame() {
     ticking = false;
     render();
     renderProgress();
+    renderFloat();
   }
 
   function onScroll() {
@@ -376,6 +402,149 @@
       });
     }
   }
+
+
+  /* =======================================================
+     EMPILEMENT — chaque carte colle quand son bas touche le
+     bas de l'écran ; la suivante glisse par-dessus.
+     ======================================================= */
+
+  var cards = document.querySelectorAll(".stack-card");
+
+  function setStick() {
+    var vh = window.innerHeight;
+    cards.forEach(function (card) {
+      card.style.setProperty("--stick", Math.min(0, vh - card.offsetHeight) + "px");
+    });
+  }
+
+  setStick();
+  window.addEventListener("resize", setStick);
+  window.addEventListener("load", setStick);
+  if ("ResizeObserver" in window) {
+    var ro = new ResizeObserver(setStick);
+    cards.forEach(function (card) { ro.observe(card); });
+  }
+
+
+  /* =======================================================
+     LOGO → BRIGADE (clic sur les logos EVERY1.ATE)
+     Position calculée "hors empilement" pour tomber juste.
+     ======================================================= */
+
+  var mainCard = document.getElementById("main");
+  var brigade = document.getElementById("brigade-grid");
+
+  function scrollToBrigade(event) {
+    if (!brigade || !mainCard || !hero) return;
+    event.preventDefault();
+    var offset = brigade.getBoundingClientRect().top - mainCard.getBoundingClientRect().top;
+    var target = hero.offsetHeight + offset - 24;
+    // Sans dépasser le moment où le footer commence à recouvrir la page
+    target = Math.min(target, hero.offsetHeight + mainCard.offsetHeight - window.innerHeight);
+    window.scrollTo({ top: target, behavior: mqReduce.matches ? "auto" : "smooth" });
+  }
+
+  document.querySelectorAll("[data-to-brigade]").forEach(function (el) {
+    el.addEventListener("click", scrollToBrigade);
+  });
+
+
+  /* =======================================================
+     NOTIFICATION (toast)
+     ======================================================= */
+
+  var toastEl = document.querySelector(".toast");
+  var toastTimer = null;
+
+  function toast(message) {
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.classList.add("is-visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove("is-visible");
+    }, 2400);
+  }
+
+
+  /* =======================================================
+     COPIER L'EMAIL
+     ======================================================= */
+
+  document.querySelectorAll("[data-copy]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var value = btn.getAttribute("data-copy");
+      var done = function () {
+        btn.textContent = "Copié";
+        btn.classList.add("is-done");
+        toast("Email copié. À très vite.");
+        setTimeout(function () {
+          btn.textContent = "Copier";
+          btn.classList.remove("is-done");
+        }, 1800);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(done, function () {
+          window.location.href = "mailto:" + value;
+        });
+      } else {
+        window.location.href = "mailto:" + value;
+      }
+    });
+  });
+
+
+  /* =======================================================
+     EASTER EGGS
+     ======================================================= */
+
+  // 1. Pour les curieux qui ouvrent la console
+  if (window.console && console.log) {
+    console.log(
+      "%cEVERY1.ATE%c\nLa cuisine est ouverte, même ici.\nUne idée ? hello@every1ate.com\n\nIndices : tapez « chef » sur la page… ou essayez ↑ ↑ ↓ ↓ ← → ← → B A.",
+      "font:700 28px Arimo,Arial,sans-serif;color:#000;background:#eaff00;padding:4px 10px;",
+      "font:14px 'Courier Prime',monospace;"
+    );
+  }
+
+  // 2. Onglet quitté : le plat refroidit
+  var baseTitle = document.title;
+  document.addEventListener("visibilitychange", function () {
+    document.title = document.hidden ? "Ça refroidit… — EVERY1.ATE" : baseTitle;
+  });
+
+  // 3. Clavier : "chef" → toute la brigade répond ; Konami → mode négatif
+  var typed = "";
+  var konami = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+  var konamiStep = 0;
+
+  document.addEventListener("keydown", function (event) {
+    var t = event.target;
+    if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
+
+    var key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+
+    // Konami
+    konamiStep = key === konami[konamiStep] ? konamiStep + 1 : (key === konami[0] ? 1 : 0);
+    if (konamiStep === konami.length) {
+      konamiStep = 0;
+      var on = document.documentElement.classList.toggle("is-negative");
+      toast(on ? "Mode négatif. Comme nos portraits." : "Retour en cuisine.");
+    }
+
+    // "chef"
+    if (key.length === 1) {
+      typed = (typed + key).slice(-4);
+      if (typed === "chef") {
+        faces.forEach(function (face, i) {
+          setTimeout(function () { blink(face); talk(face); }, i * 120);
+        });
+        toast("Oui chef !");
+      }
+    }
+  });
 
 
   /* =======================================================

@@ -10,7 +10,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&family=Caveat:wght@500;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
 <script>document.documentElement.classList.add('js');</script>
@@ -26,7 +26,7 @@
      Mobile  : section plus haute + scène "sticky" pour
                l'animation au scroll (aucun blocage).
      ===================================================== -->
-<header id="hero" class="hero">
+<header id="hero" class="hero stack-card">
   <div class="hero-stage">
 
     <!-- Une seule vidéo : le navigateur choisit la bonne source au chargement -->
@@ -37,22 +37,22 @@
 
     <!-- Top bar initiale -->
     <div class="hero-top">
-      <p class="hero-open">La cuisine<br>est ouverte.</p>
+      <p class="hero-open" id="hero-open">La cuisine est ouverte.</p>
       <p class="hero-clock" data-paris-clock>PARIS, FR 00:00:00</p>
     </div>
 
     <!-- Logo desktop -->
-    <div class="hero-logo">
+    <a class="hero-logo" href="#brigade-grid" data-to-brigade aria-label="EVERY1.ATE — découvrir la brigade">
       <img src="assets/Logo%20full%20W.png" alt="EVERY1.ATE">
       <p class="hero-tagline">Creative &amp; Strategic Kitchen</p>
-    </div>
+    </a>
 
     <!-- Logo mobile (icône + typo séparées pour l'animation) -->
     <img class="m-icon" src="assets/Logo%20Icono%20W.png" alt="" aria-hidden="true">
-    <div class="m-typo">
+    <a class="m-typo" href="#brigade-grid" data-to-brigade aria-label="EVERY1.ATE — découvrir la brigade">
       <img src="assets/Logo%20Typo%20W.png" alt="EVERY1.ATE">
       <p class="hero-tagline">Creative &amp; Strategic Kitchen</p>
-    </div>
+    </a>
 
     <!-- Mini-barre de transition (mobile uniquement, pas une navbar) -->
     <div class="m-bar" aria-hidden="true">
@@ -69,7 +69,7 @@
 </header>
 
 
-<main>
+<main id="main" class="stack-card">
 
 <!-- =====================================================
      2. NOTRE APPROCHE
@@ -80,14 +80,17 @@
     <h2 class="col-title">Notre approche</h2>
     <p class="approche-text" data-mark>
       On part des <b>bons ingrédients</b>&nbsp;:<br>
-      ce qui fait déjà la singularité d'une marque, ses produits, son histoire, sa communauté, ses codes et son environnement.
+      ce qui fait déjà la <span class="pen pen-circle">singularité<svg class="pen-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M18 38C8 20 58 5 112 6c52 1 86 12 80 29-5 18-62 23-104 21C44 54 5 46 10 30 14 18 44 9 74 8"/></svg></span> d'une marque, ses produits, son histoire, sa communauté, ses codes et son environnement.
     </p>
+    <p class="note" data-mark><svg class="note-arrow" viewBox="0 0 44 32" aria-hidden="true" focusable="false"><path pathLength="1" d="M40 28C30 26 14 20 8 6M8 6 5 16M8 6l10 3"/></svg>tout part de là</p>
     <p class="approche-text" data-mark>
-      On regarde aussi ce qui bouge autour d'elle. On ne met <b>pas le même assaisonnement sur toutes les marques</b>. Ce qui est de saison n'a pas forcément sa place dans chaque recette. <b>Les tendances nous intéressent quand elles servent le projet</b>. Quand ce n'est pas le cas, on préfère prendre le contre-pied.
+      On regarde aussi ce qui bouge autour d'elle. On ne met <b>pas le même assaisonnement sur toutes les marques</b>. Ce qui est de saison n'a pas forcément sa place dans chaque recette. <b>Les tendances nous intéressent quand elles servent le projet</b>. Quand ce n'est pas le cas, on préfère prendre le <span class="pen pen-circle">contre-pied<svg class="pen-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M18 38C8 20 58 5 112 6c52 1 86 12 80 29-5 18-62 23-104 21C44 54 5 46 10 30 14 18 44 9 74 8"/></svg></span>.
     </p>
+    <p class="note note-left" data-mark>notre péché mignon</p>
     <p class="approche-text" data-mark>
-      La bonne recette n’est pas celle du moment. C’est celle qui <b>crée du lien entre la marque et les gens</b>, nourrit l’attachement et qu’on sait mener jusqu’au bout.
+      La bonne recette n’est pas celle du moment. C’est celle qui <b>crée du lien entre la marque et les gens</b>, <span class="pen pen-under">nourrit l’attachement<svg class="pen-svg pen-svg-under" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 9c20-6 36 4 56-1s34-5 52 0 32 4 50-1 26-4 38 0"/></svg></span> et qu’on sait mener <span class="pen pen-circle">jusqu’au bout<svg class="pen-svg" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M18 38C8 20 58 5 112 6c52 1 86 12 80 29-5 18-62 23-104 21C44 54 5 46 10 30 14 18 44 9 74 8"/></svg></span>.
     </p>
+    <p class="note" data-mark><svg class="note-arrow" viewBox="0 0 44 32" aria-hidden="true" focusable="false"><path pathLength="1" d="M40 28C30 26 14 20 8 6M8 6 5 16M8 6l10 3"/></svg>promis, juré.</p>
   </div>
 
   <div id="expertises-list" class="col col-expertises" data-reveal>
@@ -101,7 +104,7 @@
   </div>
 
   <div id="brigade-grid" class="col col-brigade">
-    <h2 class="col-title" data-reveal>La brigade</h2>
+    <h2 class="col-title" data-reveal>La brigade <span class="note note-inline">les chefs&nbsp;!</span></h2>
     <div class="brigade">
 
       <article class="member" id="brigade-johan" data-reveal>
@@ -152,39 +155,43 @@
 </section>
 
 
-<!-- =====================================================
-     3. TRANSITION EVERY1.ATE
-     ===================================================== -->
-<div id="Logo-transition" class="logo-transition">
-  <img src="assets/Logo%20Typo%20B.png" alt="EVERY1.ATE" loading="lazy">
-</div>
-
 </main>
 
 
 <!-- =====================================================
-     4. FOOTER : Liens · Réseaux · Meta → Marquee (modèle Yard)
+     3. FOOTER — carte qui glisse par-dessus la page
+        Logo (clic → brigade) · CTA · infos · marquee
      ===================================================== -->
-<footer id="footer" class="footer">
+<footer id="footer" class="footer stack-card">
+
+  <a id="Logo-transition" class="logo-transition" href="#brigade-grid" data-to-brigade aria-label="EVERY1.ATE — revoir la brigade">
+    <img src="assets/Logo%20Typo%20B.png" alt="EVERY1.ATE" loading="lazy">
+  </a>
+
+  <div class="footer-cta" id="footer-cta">
+    <p class="footer-kicker">Une idée sur le feu&nbsp;?</p>
+    <button type="button" class="footer-title" data-open-form>Parlons de<br>votre projet<svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+
+    <div class="footer-actions">
+      <button type="button" class="btn-fluo" data-open-form>Démarrer un projet<svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+      <div class="footer-mail">
+        <a id="footer-email" href="mailto:hello@every1ate.com?subject=Contact%20%E2%80%94%20Every1.ate">hello@every1ate.com</a>
+        <button type="button" class="copy-mail" data-copy="hello@every1ate.com">Copier</button>
+      </div>
+    </div>
+    <p class="footer-reassure">Réponse sous 48 à 72&nbsp;h · Brief, idée ou simple café</p>
+  </div>
 
   <div id="footer-main" class="footer-main">
-
     <ul class="footer-links">
-      <li><a id="footer-email" class="u-link" href="mailto:hello@every1ate.com?subject=Contact%20%E2%80%94%20Every1.ate">hello@every1ate.com</a></li>
-      <li><button type="button" class="u-link" data-open-form>Projets &amp; collaborations</button></li>
-      <li><a id="footer-portfolio" class="u-link" href="mailto:hello@every1ate.com?subject=Demande%20de%20portfolio%20%E2%80%94%20Every1.ate">Portfolio sur demande</a></li>
+      <li><a id="footer-portfolio" href="mailto:hello@every1ate.com?subject=Demande%20de%20portfolio%20%E2%80%94%20Every1.ate">Portfolio sur demande</a></li>
+      <li><a id="footer-instagram" href="https://www.instagram.com/every1.ate/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+      <li><a id="footer-linkedin" href="https://www.linkedin.com/company/every1-ate/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
     </ul>
-
-    <ul class="footer-social">
-      <li><a id="footer-instagram" class="u-link" href="https://www.instagram.com/every1.ate/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
-      <li><a id="footer-linkedin" class="u-link" href="https://www.linkedin.com/company/every1-ate/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-    </ul>
-
     <div id="footer-meta" class="footer-meta">
       <p id="footer-paris-clock" data-paris-clock>PARIS, FR 00:00:00</p>
       <p id="footer-legal">© 2026 EVERY1.ATE</p>
     </div>
-
   </div>
 
   <div class="e1-marquee">
@@ -212,6 +219,13 @@
   </div>
 
 </footer>
+
+
+<!-- CTA flottant : apparaît après le hero, disparaît au footer -->
+<button type="button" class="float-cta" data-open-form aria-hidden="true" tabindex="-1">Parlons projet<svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+
+<!-- Petites notifications (copie de l'email, easter eggs) -->
+<div class="toast" role="status" aria-live="polite"></div>
 
 
 <!-- =====================================================
