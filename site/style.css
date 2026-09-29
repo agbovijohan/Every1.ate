@@ -1857,11 +1857,256 @@ main.stack-card,
 
 
 /* =========================================================
-   EASTER EGG : mode négatif (code Konami)
+   EASTER EGG : mode négatif ("contre-pied")
    ========================================================= */
 
 html.is-negative {
   filter: invert(1);
+}
+
+
+/* =========================================================
+   EASTER EGGS
+   ========================================================= */
+
+/* --- Mots cliquables : petit indice au survol --- */
+[data-egg] {
+  cursor: pointer;
+}
+
+.approche-text b[data-egg]:hover,
+.approche-text b[data-egg]:focus-visible {
+  text-decoration: underline wavy var(--pen) 1px;
+  text-underline-offset: 3px;
+  outline: none;
+}
+
+.pen[data-egg]:hover .pen-svg path,
+.pen[data-egg]:focus-visible .pen-svg path {
+  stroke-width: 3px;
+}
+
+.pen[data-egg]:focus-visible {
+  outline: none;
+}
+
+.note-psst {
+  margin-top: 1.4em;
+  font-size: clamp(16px, 1.15vw, 19px);
+  opacity: .75;
+}
+
+/* --- Notification avec action --- */
+.toast.has-action {
+  pointer-events: auto;
+}
+
+.toast-action {
+  margin-left: 12px;
+  padding: 4px 8px 3px;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* --- 1. Coup de feu : légère trépidation du marquee et de la barre --- */
+html.is-rush .scroll-progress {
+  height: 6px;
+}
+
+/* --- 2. Plat du jour : ticket de cuisine --- */
+.ticket {
+  position: fixed;
+  left: max(18px, env(safe-area-inset-left));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 950;
+  width: min(300px, calc(100% - 36px));
+  padding: 16px 16px 20px;
+  background: #fffdf6;
+  color: var(--black);
+  font-family: var(--font-text);
+  font-size: 12px;
+  line-height: 1.35;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .28);
+  /* bord bas déchiré (dents de scie) */
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat,
+                conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat,
+        conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 12px 8px repeat-x;
+  transform: translateY(calc(100% + 40px)) rotate(-2deg);
+  visibility: hidden;
+  transition: transform 420ms var(--ease), visibility 0s linear 420ms;
+}
+
+.ticket.is-open {
+  transform: rotate(-2deg);
+  visibility: visible;
+  transition: transform 420ms var(--ease);
+}
+
+.ticket-head {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--black);
+  font-weight: 700;
+}
+
+.ticket-meta {
+  margin: 8px 0 12px;
+  font-size: 11px;
+  white-space: pre;
+}
+
+.ticket-kicker {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--pen);
+}
+
+.ticket-dish {
+  margin: 2px 0 12px;
+  font-family: var(--font-title);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.ticket-lines {
+  margin: 0;
+  padding: 10px 0;
+  border-top: 1px dashed var(--black);
+  border-bottom: 1px dashed var(--black);
+}
+
+.ticket-lines dt {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.ticket-lines dd {
+  margin: 0 0 6px;
+}
+
+.ticket-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.ticket-order {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px 8px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: transform 120ms ease;
+}
+
+.ticket-order:active {
+  transform: scale(.97);
+}
+
+.ticket-close {
+  font-family: var(--font-title);
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 6px;
+}
+
+/* --- 3. Pluie d'assiettes --- */
+.plate-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 940;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.plate-rain img {
+  position: absolute;
+  top: 0;
+  height: auto;
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+
+/* --- Clin d'œil : une seule paupière --- */
+.eye.is-winking::after {
+  animation: e1-blink 420ms ease-in-out;
+}
+
+/* --- 5. Mode croquis : carnet de brief --- */
+html.is-sketch main.stack-card {
+  background:
+    linear-gradient(90deg, transparent 26px, rgba(225, 38, 28, .45) 26px 27px, transparent 27px),
+    repeating-linear-gradient(#fffdf6 0 29px, #cddff0 29px 30px);
+}
+
+html.is-sketch main :is(p, li, h2, h3, .xp-title, .xp-cta) {
+  font-family: var(--font-hand) !important;
+  color: var(--pen);
+}
+
+html.is-sketch main :is(.approche-text, .xp-toggle, .member-role, .member-aka, .member-name) {
+  font-size: 1.25em;
+  line-height: 1.15;
+}
+
+html.is-sketch main .col-title {
+  font-size: 2.1em;
+  text-decoration: line-through var(--pen) 2px;
+}
+
+html.is-sketch main .col-title::after {
+  content: " v2 ?";
+  font-size: .6em;
+  text-decoration: none;
+  display: inline-block;
+  transform: rotate(-6deg);
+}
+
+html.is-sketch .member-photo {
+  box-shadow: 0 0 0 6px #fff, 0 3px 12px rgba(0, 0, 0, .25);
+  transform: rotate(-2.5deg);
+}
+
+html.is-sketch .member:nth-child(2) .member-photo {
+  transform: rotate(2deg);
+}
+
+html.is-sketch .approche-text b {
+  background-image: none;
+  text-decoration: underline wavy var(--pen) 1.5px;
+}
+
+/* Mobile : la notification passe en haut (le bas est pris par le CTA flottant) */
+@media (max-width: 480px) {
+  .toast {
+    top: max(14px, env(safe-area-inset-top));
+    bottom: auto;
+    transform: translate(-50%, -12px);
+  }
+  .toast.is-visible {
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Sans animations : pas de pluie */
+@media (prefers-reduced-motion: reduce) {
+  .plate-rain { display: none; }
 }
 
 

@@ -33,7 +33,7 @@
 
     // Easter egg : entre minuit et 6 h (heure de Paris), service de nuit
     var open = document.getElementById("hero-open");
-    if (open) {
+    if (open && !open.hasAttribute("data-force")) {
       var night = parseInt(time.slice(0, 2), 10) < 6;
       var label = night ? "Service de nuit." : "La cuisine est ouverte.";
       if (open.textContent !== label) open.textContent = label;
@@ -524,14 +524,27 @@
   var toastEl = document.querySelector(".toast");
   var toastTimer = null;
 
-  function toast(message) {
+  // action (optionnelle) : { label, onClick } → petit bouton dans la notification
+  function toast(message, action) {
     if (!toastEl) return;
     toastEl.textContent = message;
+    toastEl.classList.toggle("has-action", !!action);
+    if (action) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "toast-action";
+      btn.textContent = action.label;
+      btn.addEventListener("click", function () {
+        toastEl.classList.remove("is-visible");
+        action.onClick();
+      });
+      toastEl.appendChild(btn);
+    }
     toastEl.classList.add("is-visible");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () {
-      toastEl.classList.remove("is-visible");
-    }, 2400);
+      toastEl.classList.remove("is-visible", "has-action");
+    }, action ? 5000 : 2400);
   }
 
 
@@ -570,7 +583,7 @@
   // 1. Pour les curieux qui ouvrent la console
   if (window.console && console.log) {
     console.log(
-      "%cEVERY1.ATE%c\nLa cuisine est ouverte, même ici.\nUne idée ? hello@every1ate.com\n\nIndices : tapez « chef », « service » ou un prénom de la brigade… ou essayez ↑ ↑ ↓ ↓.",
+      "%cEVERY1.ATE%c\nLa cuisine est ouverte, même ici.\nUne idée ? hello@every1ate.com\n\nIndices : tapez « chef », « service », « feu » ou un prénom de la brigade… cliquez sur les mots surlignés… ou essayez ↑ ↑ ↓ ↓ (plusieurs fois).",
       "font:700 28px Arimo,Arial,sans-serif;color:#000;background:#eaff00;padding:4px 10px;",
       "font:14px 'Courier Prime',monospace;"
     );
@@ -582,7 +595,8 @@
     document.title = document.hidden ? "Ça refroidit… — EVERY1.ATE" : baseTitle;
   });
 
-  // 3. Mots magiques : tapez-les n'importe où sur la page
+  // 3. Les effets : un seul catalogue, déclenché au clavier,
+  //    au clic sur les mots mis en avant, ou par le code ↑ ↑ ↓ ↓
   var faceOf = function (id) {
     var el = document.querySelector("#photo-" + id + " .face");
     return el ? [el] : [];
@@ -602,8 +616,205 @@
     });
   }
 
-  var track = document.querySelector(".e1-marquee-track");
+  function openFormNow() {
+    var trigger = document.querySelector(".hero-cta");
+    if (trigger) trigger.click();
+  }
 
+  var track = document.querySelector(".e1-marquee-track");
+  var busy = false;
+
+  // Un seul effet "long" à la fois
+  function exclusive(duration, fn) {
+    if (busy) return;
+    busy = true;
+    fn();
+    setTimeout(function () { busy = false; }, duration);
+  }
+
+  var eggs = {
+
+    /* 1. COUP DE FEU — toute la page s'emballe 5 s */
+    rush: function () {
+      exclusive(5200, function () {
+        toast("Coup de feu en cuisine !");
+        document.documentElement.classList.add("is-rush");
+        replayMarks();
+        if (track) track.style.animationDuration = "6s";
+        var n = 0;
+        var loop = setInterval(function () {
+          faces.forEach(function (face, i) {
+            setTimeout(function () { talk(face); if (Math.random() > .5) blink(face); }, i * 90);
+          });
+          if (++n >= 8) clearInterval(loop);
+        }, 600);
+        setTimeout(function () {
+          document.documentElement.classList.remove("is-rush");
+          if (track) track.style.animationDuration = "";
+          toast("Service terminé. On vous écoute ?", { label: "Parlons projet", onClick: openFormNow });
+        }, 5000);
+      });
+    },
+
+    /* 2. PLAT DU JOUR — un ticket de cuisine qui mène au formulaire */
+    plat: function () {
+      var ticket = document.querySelector(".ticket");
+      if (!ticket) return;
+      ticket.querySelector(".ticket-no").textContent = "BON N° " + String(Math.floor(Math.random() * 900) + 100);
+      ticket.classList.add("is-open");
+      ticket.setAttribute("aria-hidden", "false");
+    },
+
+    /* 3. PLUIE D'ASSIETTES — l'icône tombe par dizaines et rebondit */
+    pluie: function () {
+      exclusive(3400, function () {
+        if (mqReduce.matches) { toast("Attention, ça glisse !"); return; }
+        var rain = document.createElement("div");
+        rain.className = "plate-rain";
+        document.body.appendChild(rain);
+        var vh = window.innerHeight;
+        for (var i = 0; i < 26; i++) {
+          var img = document.createElement("img");
+          img.src = "assets/Logo%20Icono%20W.png";
+          img.alt = "";
+          var size = 28 + Math.random() * 46;
+          img.style.width = size + "px";
+          img.style.left = (Math.random() * 100) + "%";
+          rain.appendChild(img);
+          var floor = vh - size;
+          var spin = (Math.random() > .5 ? 1 : -1) * (180 + Math.random() * 360);
+          img.animate([
+            { transform: "translate(-50%, -120px) rotate(0deg)", opacity: 1 },
+            { transform: "translate(-50%, " + floor + "px) rotate(" + spin * .7 + "deg)", opacity: 1, offset: .62 },
+            { transform: "translate(-50%, " + (floor - 60 - Math.random() * 60) + "px) rotate(" + spin * .85 + "deg)", opacity: 1, offset: .78 },
+            { transform: "translate(-50%, " + floor + "px) rotate(" + spin + "deg)", opacity: 0 }
+          ], {
+            duration: 1800 + Math.random() * 900,
+            delay: Math.random() * 700,
+            easing: "cubic-bezier(.5, 0, .75, 1)",
+            fill: "both"
+          });
+        }
+        toast("Attention, ça glisse !");
+        setTimeout(function () { rain.remove(); }, 3400);
+      });
+    },
+
+    /* 4. LA BRIGADE EN CUISINE — ils "chantent" à tour de rôle */
+    brigade: function () {
+      exclusive(4200, function () {
+        goToBrigade();
+        toast("La brigade donne de la voix.");
+        var order = [faceOf("johan"), faceOf("pierre"), faceOf("charles")];
+        [0, 1].forEach(function (round) {
+          var base = 700 + round * 1700;
+          order.forEach(function (list, i) {
+            setTimeout(function () { wake(list); }, base + i * 420);
+          });
+          setTimeout(function () { faces.forEach(blink); }, base + 1300);
+        });
+      });
+    },
+
+    /* 5. MODE CROQUIS — le site redevient un carnet de brief, 8 s */
+    croquis: function () {
+      exclusive(8200, function () {
+        document.documentElement.classList.add("is-sketch");
+        setStick();
+        toast("Mode croquis : on repasse au brouillon.");
+        setTimeout(function () {
+          document.documentElement.classList.remove("is-sketch");
+          setStick();
+          toast("Retour au propre.");
+        }, 8000);
+      });
+    },
+
+    /* Bonus — mode négatif ("contre-pied") */
+    negatif: function () {
+      var on = document.documentElement.classList.toggle("is-negative");
+      toast(on ? "Mode négatif : on prend le contre-pied." : "Retour en cuisine.");
+    },
+
+    /* Bonus — la brigade vous fait un clin d'œil */
+    clin: function () {
+      goToBrigade();
+      faces.forEach(function (face, i) {
+        var eye = face.querySelectorAll(".eye")[i % 2];
+        setTimeout(function () {
+          eye.classList.remove("is-winking");
+          void eye.offsetWidth;
+          eye.classList.add("is-winking");
+          setTimeout(function () { eye.classList.remove("is-winking"); }, 460);
+        }, 700 + i * 220);
+      });
+      toast("On s’attache vite, nous aussi.");
+    },
+
+    /* Bonus — "jusqu'au bout" : direction le contact */
+    bout: function () {
+      var target = document.getElementById("footer-cta");
+      if (!target) return;
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: mqReduce.matches ? "auto" : "smooth"
+      });
+      toast("On vous accompagne jusqu’au bout.");
+    },
+
+    /* Bonus — le marquee repart en marche arrière */
+    marquee: function () {
+      if (!track) return;
+      var back = track.style.animationDirection !== "reverse";
+      track.style.animationDirection = back ? "reverse" : "";
+      toast(back ? "Marche arrière, chef." : "Et on repart.");
+    },
+
+    /* Bonus — l'horloge du hero : aperçu du service de nuit */
+    nuit: function () {
+      var open = document.getElementById("hero-open");
+      if (!open) return;
+      open.setAttribute("data-force", "1");
+      open.textContent = "Service de nuit.";
+      toast("Revenez après minuit, c’est pareil.");
+      setTimeout(function () { open.removeAttribute("data-force"); }, 4000);
+    },
+
+    /* Bonus — le copyright */
+    legal: function () {
+      toast("Recette déposée. Enfin… presque.");
+    }
+  };
+
+  function goToBrigade() {
+    var link = document.querySelector("[data-to-brigade]");
+    if (link) link.click();
+  }
+
+  // Clic (ou Entrée) sur les éléments marqués data-egg
+  document.querySelectorAll("[data-egg]").forEach(function (el) {
+    var run = function (event) {
+      if (event) event.preventDefault();
+      var fn = eggs[el.getAttribute("data-egg")];
+      if (fn) fn();
+    };
+    el.addEventListener("click", run);
+    el.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") run(event);
+    });
+  });
+
+  // Fermer le ticket
+  var ticketClose = document.querySelector(".ticket-close");
+  if (ticketClose) {
+    ticketClose.addEventListener("click", function () {
+      var ticket = document.querySelector(".ticket");
+      ticket.classList.remove("is-open");
+      ticket.setAttribute("aria-hidden", "true");
+    });
+  }
+
+  // Mots magiques au clavier
   var words = {
     chef:    function () { wake(faces); toast("Oui chef !"); },
     johan:   function () { wake(faceOf("johan")); toast("Jo’ au rapport."); },
@@ -619,8 +830,15 @@
     },
     sel:     function () { replayMarks(); toast("Une pincée de sel… et on relit."); },
     miam:    function () { wake(faces, 60); toast("Merci, on transmet en cuisine."); },
-    hello:   function () { wake(faces, 90); toast("Hello ! On vous écoute."); }
+    hello:   function () { wake(faces, 90); toast("Hello ! On vous écoute."); },
+    plat:    eggs.plat,
+    croquis: eggs.croquis,
+    feu:     eggs.rush
   };
+
+  // Code secret ↑ ↑ ↓ ↓ : les 5 effets, chacun son tour
+  var konamiCycle = ["rush", "plat", "pluie", "brigade", "croquis"];
+  var konamiIndex = 0;
 
   var typedWords = "";
   var arrows = "";
@@ -629,13 +847,12 @@
     var t = event.target;
     if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT")) return;
 
-    // Code secret simplifié : ↑ ↑ ↓ ↓ → mode négatif
     if (event.key.indexOf("Arrow") === 0) {
       arrows = (arrows + event.key.charAt(5)).slice(-4); // U, D, L, R
       if (arrows === "UUDD") {
         arrows = "";
-        var on = document.documentElement.classList.toggle("is-negative");
-        toast(on ? "Mode négatif. Comme nos portraits." : "Retour en cuisine.");
+        eggs[konamiCycle[konamiIndex]]();
+        konamiIndex = (konamiIndex + 1) % konamiCycle.length;
       }
       return;
     }
