@@ -30,3 +30,16 @@ Hébergées dans `assets/`. Une seule balise `<video>` : le navigateur prend
 
 ## Formulaire
 Envoi via Formspree (`https://formspree.io/f/mjyvnlvd`), inchangé.
+
+## Référencement (SEO / GEO)
+- `index.html` : titre, description, balises de partage, données structurées (JSON-LD).
+- `robots.txt`, `sitemap.xml`, `llms.txt` (résumé du studio pour les moteurs IA).
+- `assets/web/` : logos optimisés (WebP), icônes, image de partage `og-image.jpg`.
+
+**Le jour où le domaine every1ate.com est branché sur Netlify**, remplacer
+`https://every1ate.netlify.app` par `https://every1ate.com` dans :
+`index.html`, `mentions-legales.html`, `robots.txt`, `sitemap.xml`, `llms.txt`.
+
+## Mentions légales
+`mentions-legales.html` : compléter les champs marqués « à compléter »
+(capital, siège, SIREN, TVA, directeur de la publication, adresse de Netlify).

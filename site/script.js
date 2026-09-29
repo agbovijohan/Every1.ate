@@ -56,7 +56,7 @@
                     et se place au centre de la barre,
                     logo typo disparaît
        0.30 → 0.60  statement apparaît
-       0.40 → 0.70  CTA apparaît
+       (le CTA, lui, est visible dès l'arrivée)
        0.82 → 1.00  barre (et icône) remontent et disparaissent
      ======================================================= */
 
@@ -681,7 +681,7 @@
         var vh = window.innerHeight;
         for (var i = 0; i < 30; i++) {
           var img = document.createElement("img");
-          img.src = "assets/Logo%20icono%20B.png";
+          img.src = "assets/web/logo-icon-b.webp";
           img.alt = "";
           var size = 48 + Math.random() * 70;
           img.style.width = size + "px";
@@ -1240,6 +1240,11 @@
   document.querySelectorAll("[data-open-form]").forEach(function (el) {
     el.addEventListener("click", openForm);
   });
+
+  // Lien direct vers le formulaire : …/#contact
+  if (window.location.hash === "#contact") {
+    setTimeout(function () { openForm(); }, 400);
+  }
 
   ["e1-form-close", "e1-success-close"].forEach(function (id) {
     var el = document.getElementById(id);

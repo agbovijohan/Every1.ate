@@ -101,6 +101,19 @@ button {
   outline-offset: 4px;
 }
 
+/* Texte lu par Google et les lecteurs d'écran, invisible à l'œil */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 body.e1-form-open {
   overflow: hidden;
 }
@@ -2457,6 +2470,130 @@ html.is-sketch .approche-text b {
   }
 }
 
+/* En-tête "sélection de joueur" : 3 emplacements */
+.chef-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--black);
+}
+
+.chef-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.chef-tab {
+  width: 40px;
+  height: 48px;
+  overflow: hidden;
+  border: 1.5px solid transparent;
+  opacity: .45;
+  transition: opacity var(--t-fast) ease, border-color var(--t-fast) ease, transform 120ms ease;
+}
+
+.chef-tab img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+.chef-tab:hover {
+  opacity: .8;
+}
+
+.chef-tab.is-active {
+  opacity: 1;
+  border-color: var(--black);
+}
+
+.chef-tab:active {
+  transform: scale(.94);
+}
+
+.chef-kicker {
+  margin-left: auto;
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.chef-close {
+  font-family: var(--font-title);
+  font-size: 24px;
+  line-height: 1;
+  padding: 4px 6px;
+}
+
+.chef-name {
+  margin-top: 14px;
+  font-family: var(--font-title);
+  font-size: 34px;
+  font-weight: 700;
+  line-height: .95;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+
+.chef-aka-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.chef-link {
+  transition: color var(--t-fast) ease;
+}
+
+.chef-link:hover {
+  color: var(--pen);
+}
+
+.chef-handle {
+  font-family: var(--font-text);
+  text-transform: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.chef-role {
+  margin-top: .7em;
+  padding-bottom: .8em;
+  border-bottom: 1px solid var(--black);
+  font-family: var(--font-title);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.chef-fiche {
+  margin: 4px 0 0;
+}
+
+.chef-fiche dt {
+  margin-top: 12px;
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.chef-fiche dd {
+  margin: .25em 0 0;
+  font-family: var(--font-text);
+  font-size: 13px;
+  line-height: 1.38;
+}
+
 /* le visage sélectionné est "encadré", comme un joueur choisi */
 .member.is-selected .member-photo {
   outline: 2px solid var(--black);
@@ -2602,6 +2739,143 @@ html.is-sketch .approche-text b {
 /* Sans animations : pas de pluie */
 @media (prefers-reduced-motion: reduce) {
   .plate-rain { display: none; }
+}
+
+
+/* =========================================================
+   PAGE MENTIONS LÉGALES
+   ========================================================= */
+
+.legal-page {
+  background: var(--white);
+}
+
+.legal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 22px var(--gutter);
+  border-bottom: 1px solid var(--black);
+}
+
+.legal-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.legal-back svg {
+  width: 14px;
+  height: 14px;
+}
+
+.legal-logo img {
+  width: clamp(120px, 14vw, 200px);
+  height: auto;
+}
+
+.legal {
+  max-width: 760px;
+  padding: clamp(36px, 5vw, 72px) var(--gutter) 80px;
+  font-family: var(--font-text);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.legal h1 {
+  font-family: var(--font-title);
+  font-size: clamp(32px, 4.4vw, 56px);
+  font-weight: 700;
+  line-height: .98;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+
+.legal-updated {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: .6;
+}
+
+.legal section {
+  margin-top: 44px;
+}
+
+.legal h2 {
+  margin-bottom: 12px;
+  font-family: var(--font-title);
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.legal h3 {
+  margin: 18px 0 4px;
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.legal p + p {
+  margin-top: .8em;
+}
+
+.legal dl {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 8px 20px;
+  margin: 14px 0 0;
+}
+
+.legal dt {
+  font-weight: 700;
+}
+
+.legal dd {
+  margin: 0;
+}
+
+.legal a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legal .todo {
+  color: var(--pen);
+  font-weight: 700;
+}
+
+.legal-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px var(--gutter) max(26px, env(safe-area-inset-bottom));
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-text);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.legal-foot a {
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .legal dl {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .legal dd {
+    margin-bottom: 10px;
+  }
 }
 
 
