@@ -2556,6 +2556,49 @@ html.is-sketch .approche-text b {
   text-transform: uppercase;
 }
 
+/* Le cycle de travail : chaque poste est une étape, aucun n'est au-dessus */
+.chef-cycle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 22px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-text);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.chef-cycle li {
+  position: relative;
+  padding: 4px 8px 3px;
+  border: 1px solid rgba(0, 0, 0, .3);
+  opacity: .55;
+}
+
+.chef-cycle li + li::before {
+  content: "→";
+  position: absolute;
+  left: -17px;
+  top: 3px;
+  color: var(--black);
+  font-weight: 400;
+}
+
+.chef-cycle li.is-current {
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--white);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.note-cycle {
+  margin-top: 1.4em;
+  line-height: 1.05;
+}
+
 .chef-stats-title {
   margin-top: 22px;
   font-family: var(--font-title);

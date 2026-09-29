@@ -1014,7 +1014,10 @@
     var portrait = chef.querySelector(".chef-portrait");
     portrait.src = img.getAttribute("src");
     portrait.alt = img.alt;
-    chef.querySelector(".chef-pos").textContent = mb.getAttribute("data-pos") || "";
+    chef.querySelector(".chef-pos").innerHTML = mb.getAttribute("data-pos") || "";
+    chef.querySelectorAll(".chef-cycle li").forEach(function (li) {
+      li.classList.toggle("is-current", parseInt(li.getAttribute("data-k"), 10) === chefIndex);
+    });
 
     // Ingrédients : diagramme (dosage) + liste
     var stats = (mb.getAttribute("data-stats") || "").split("|").map(function (pair) {
