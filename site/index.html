@@ -166,7 +166,7 @@
     <div class="brigade">
 
       <article class="member" id="brigade-johan" data-reveal>
-        <a id="photo-johan" class="member-photo" href="https://www.instagram.com/petitbelier._/" target="_blank" rel="noopener noreferrer" aria-label="Johan sur Instagram">
+        <a id="photo-johan" class="member-photo" href="https://www.instagram.com/petitbelier._/" target="_blank" rel="noopener noreferrer" aria-label="Voir la fiche de Johan">
           <span class="face" style="--ar:324/396;--src:url('assets/SF%20Johan.png')">
             <img src="assets/SF%20Johan.png" alt="Portrait de Johan" loading="lazy">
             <span class="eye" style="--x:37.0;--y:33.1;--w:12.3;--h:5.6"><span></span></span>
@@ -177,7 +177,7 @@
         <h3 class="member-name">Johan</h3>
         <p class="member-aka">Aka Petit Bélier</p>
         <p class="member-role">Créative Strategist<br>&amp; Producer</p>
-        <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-johan"><span>La fiche</span><span class="xp-plus" aria-hidden="true"></span></button>
+        <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-johan"><span>Voir la fiche</span><svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
         <div class="member-fiche" id="fiche-johan">
           <dl class="fiche-inner">
             <dt>Dans la cuisine</dt><dd>Repère les bons angles, construit les concepts, structure les projets et les pousse jusqu’au réel.</dd>
@@ -190,7 +190,7 @@
       </article>
 
       <article class="member" id="brigade-pierre" data-reveal>
-        <a id="photo-pierre" class="member-photo" href="https://www.instagram.com/boxitooooo/" target="_blank" rel="noopener noreferrer" aria-label="Pierre sur Instagram">
+        <a id="photo-pierre" class="member-photo" href="https://www.instagram.com/boxitooooo/" target="_blank" rel="noopener noreferrer" aria-label="Voir la fiche de Pierre">
           <span class="face" style="--ar:305/393;--src:url('assets/SF%20Pierre.png')">
             <img src="assets/SF%20Pierre.png" alt="Portrait de Pierre" loading="lazy">
             <span class="eye" style="--x:36.4;--y:48.9;--w:13.1;--h:5.6"><span></span></span>
@@ -201,7 +201,7 @@
         <h3 class="member-name">Pierre</h3>
         <p class="member-aka">Aka Boxito</p>
         <p class="member-role">Directeur artistique<br>&amp; Graphiste</p>
-        <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-pierre"><span>La fiche</span><span class="xp-plus" aria-hidden="true"></span></button>
+        <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-pierre"><span>Voir la fiche</span><svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
         <div class="member-fiche" id="fiche-pierre">
           <dl class="fiche-inner">
             <dt>Dans la cuisine</dt><dd>Pose une direction claire avant l’exécution, peaufine chaque détail, avance étape par étape.</dd>
@@ -214,7 +214,7 @@
       </article>
 
       <article class="member" id="brigade-charles" data-reveal>
-        <a id="photo-charles" class="member-photo" href="https://www.instagram.com/charleslnr/" target="_blank" rel="noopener noreferrer" aria-label="Charles sur Instagram">
+        <a id="photo-charles" class="member-photo" href="https://www.instagram.com/charleslnr/" target="_blank" rel="noopener noreferrer" aria-label="Voir la fiche de Charles">
           <span class="face" style="--ar:308/397;--src:url('assets/SF%20Charles.png')">
             <img src="assets/SF%20Charles.png" alt="Portrait de Charles" loading="lazy">
             <span class="eye" style="--x:28.2;--y:54.9;--w:13.0;--h:5.5"><span></span></span>
@@ -225,7 +225,7 @@
         <h3 class="member-name">Charles</h3>
         <p class="member-aka">Aka Charlito</p>
         <p class="member-role">Réal &amp; DOP</p>
-        <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-charles"><span>La fiche</span><span class="xp-plus" aria-hidden="true"></span></button>
+        <button type="button" class="member-more" aria-expanded="false" aria-controls="fiche-charles"><span>Voir la fiche</span><svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
         <div class="member-fiche" id="fiche-charles">
           <dl class="fiche-inner">
             <dt>Dans la cuisine</dt><dd>Fonce sur le plateau avec une vision claire, prend les décisions vite sans se perdre en discussion, motive l’équipe par l’énergie.</dd>
@@ -313,6 +313,30 @@
 
 <!-- Petites notifications (copie de l'email, easter eggs) -->
 <div class="toast" role="status" aria-live="polite"></div>
+
+<!-- Fiche d'un chef de la brigade -->
+<div class="chef" role="dialog" aria-modal="true" aria-labelledby="chef-name" aria-hidden="true">
+  <div class="chef-backdrop"></div>
+  <div class="chef-panel">
+    <div class="chef-top">
+      <p class="chef-kicker">La brigade · <span class="chef-index">1 / 3</span></p>
+      <div class="chef-nav">
+        <button type="button" class="chef-prev" aria-label="Chef précédent"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+        <button type="button" class="chef-next" aria-label="Chef suivant"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+        <button type="button" class="chef-close">Fermer ×</button>
+      </div>
+    </div>
+    <div class="chef-grid">
+      <div class="chef-photo"><img src="" alt=""></div>
+      <div class="chef-info">
+        <h3 id="chef-name" class="chef-name"><span class="chef-first"></span> <span class="chef-aka"></span></h3>
+        <p class="chef-role"></p>
+        <dl class="chef-fiche"></dl>
+        <a class="chef-insta" href="#" target="_blank" rel="noopener noreferrer">Son Instagram<svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- La carte secrète : tous les easter eggs, accessibles en un clic -->
 <div class="carte" role="dialog" aria-modal="false" aria-labelledby="carte-title" aria-hidden="true">

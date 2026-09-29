@@ -857,13 +857,13 @@
 
   // Clic (ou Entrée) sur les éléments marqués data-egg
   document.querySelectorAll("[data-egg]").forEach(function (el) {
-    var run = function (event) {
+    var trigger = function (event) {
       if (event) event.preventDefault();
       run(el.getAttribute("data-egg"));
     };
-    el.addEventListener("click", run);
+    el.addEventListener("click", trigger);
     el.addEventListener("keydown", function (event) {
-      if (event.key === "Enter" || event.key === " ") run(event);
+      if (event.key === "Enter" || event.key === " ") trigger(event);
     });
   });
 
@@ -961,18 +961,93 @@
 
   /* =======================================================
      BRIGADE — la fiche de chaque chef
+     Clic sur le portrait ou "Voir la fiche" → fiche en grand,
+     flèches (ou ← →) pour passer d'un chef à l'autre.
      ======================================================= */
 
-  document.querySelectorAll(".member-more").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var member = btn.closest(".member");
-      var open = !member.classList.contains("is-open");
-      member.classList.toggle("is-open", open);
-      btn.setAttribute("aria-expanded", open ? "true" : "false");
-      var face = member.querySelector(".face");
-      if (open && face) { blink(face); talk(face); }
+  var members = Array.prototype.slice.call(document.querySelectorAll(".member"));
+  var chef = document.querySelector(".chef");
+  var chefIndex = 0;
+  var chefTrigger = null;
+
+  function fillChef(i) {
+    chefIndex = (i + members.length) % members.length;
+    var m = members[chefIndex];
+    var photo = m.querySelector(".member-photo");
+    chef.querySelector(".chef-index").textContent = (chefIndex + 1) + " / " + members.length;
+    chef.querySelector(".chef-photo img").src = m.querySelector(".face img").getAttribute("src");
+    chef.querySelector(".chef-photo img").alt = m.querySelector(".face img").alt;
+    chef.querySelector(".chef-first").textContent = m.querySelector(".member-name").textContent;
+    chef.querySelector(".chef-aka").textContent = m.querySelector(".member-aka").textContent;
+    chef.querySelector(".chef-role").innerHTML = m.querySelector(".member-role").innerHTML;
+    chef.querySelector(".chef-insta").href = photo.getAttribute("href");
+
+    // Rubriques : on regroupe chaque intitulé avec son texte
+    var dl = chef.querySelector(".chef-fiche");
+    dl.innerHTML = "";
+    var dts = m.querySelectorAll(".fiche-inner dt");
+    dts.forEach(function (dt) {
+      var group = document.createElement("div");
+      group.appendChild(dt.cloneNode(true));
+      group.appendChild(dt.nextElementSibling.cloneNode(true));
+      dl.appendChild(group);
     });
+
+    var face = m.querySelector(".face");
+    if (face) { blink(face); talk(face); }
+  }
+
+  function openChef(i) {
+    if (!chef) return;
+    chefTrigger = document.activeElement;
+    fillChef(i);
+    chef.classList.add("is-open");
+    chef.setAttribute("aria-hidden", "false");
+    document.body.classList.add("chef-open");
+    chef.querySelector(".chef-panel").scrollTop = 0;
+    chef.querySelector(".chef-close").focus({ preventScroll: true });
+  }
+
+  function closeChef() {
+    if (!chef || !chef.classList.contains("is-open")) return;
+    chef.classList.remove("is-open");
+    chef.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("chef-open");
+    if (chefTrigger && chefTrigger.focus) chefTrigger.focus({ preventScroll: true });
+  }
+
+  members.forEach(function (m, i) {
+    m.querySelector(".member-photo").addEventListener("click", function (event) {
+      event.preventDefault();
+      openChef(i);
+    });
+    var more = m.querySelector(".member-more");
+    if (more) more.addEventListener("click", function () { openChef(i); });
   });
+
+  if (chef) {
+    chef.querySelector(".chef-close").addEventListener("click", closeChef);
+    chef.querySelector(".chef-backdrop").addEventListener("click", closeChef);
+    chef.querySelector(".chef-prev").addEventListener("click", function () { fillChef(chefIndex - 1); });
+    chef.querySelector(".chef-next").addEventListener("click", function () { fillChef(chefIndex + 1); });
+
+    document.addEventListener("keydown", function (event) {
+      if (!chef.classList.contains("is-open")) return;
+      if (event.key === "Escape") closeChef();
+      if (event.key === "ArrowLeft") fillChef(chefIndex - 1);
+      if (event.key === "ArrowRight") fillChef(chefIndex + 1);
+    });
+
+    // Mobile : glisser à gauche / à droite pour changer de chef
+    var startX = null;
+    chef.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; }, { passive: true });
+    chef.addEventListener("touchend", function (e) {
+      if (startX === null) return;
+      var dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 60) fillChef(chefIndex + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+  }
 
 
   /* =======================================================
