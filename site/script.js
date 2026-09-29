@@ -961,75 +961,134 @@
 
   /* =======================================================
      BRIGADE — la fiche de chaque chef
-     Clic sur le portrait ou "Voir la fiche" → fiche en grand,
-     flèches (ou ← →) pour passer d'un chef à l'autre.
+     Clic sur un visage → une bulle s'ouvre accrochée à lui,
+     façon "sélection de joueur" (3 emplacements en haut).
+     Nom ou surnom → Instagram. Clic à côté / Échap → ferme.
      ======================================================= */
 
   var members = Array.prototype.slice.call(document.querySelectorAll(".member"));
   var chef = document.querySelector(".chef");
-  var chefIndex = 0;
-  var chefTrigger = null;
+  var bubble = chef && chef.querySelector(".chef-bubble");
+  var chefIndex = -1;
+  var chefScroll = 0;
+
+  function placeBubble() {
+    if (chefIndex < 0) return;
+    var photo = members[chefIndex].querySelector(".member-photo").getBoundingClientRect();
+    // si le visage sort de l'écran, on range la bulle
+    if (photo.bottom < 0 || photo.top > window.innerHeight) { closeChef(); return; }
+
+    var vw = window.innerWidth, vh = window.innerHeight, gap = 18, m = 12;
+    var bw = bubble.offsetWidth, bh = bubble.offsetHeight;
+    var side, x, y, tail;
+
+    bubble.style.maxHeight = "";
+    bh = bubble.offsetHeight;
+    if (photo.right + gap + bw + m <= vw) side = "right";
+    else if (photo.left - gap - bw - m >= 0) side = "left";
+    else side = (vh - photo.bottom > photo.top) ? "below" : "above";
+
+    if (side === "right" || side === "left") {
+      x = side === "right" ? photo.right + gap : photo.left - gap - bw;
+      y = Math.min(Math.max(m, photo.top), vh - bh - m);
+      tail = Math.min(Math.max(16, photo.top + photo.height * 0.35 - y), bh - 30);
+    } else {
+      // pas de place sur les côtés : la bulle prend la hauteur disponible
+      var room = side === "below" ? vh - photo.bottom - gap - m : photo.top - gap - m;
+      bubble.style.maxHeight = Math.max(220, room) + "px";
+      bh = bubble.offsetHeight;
+      x = Math.min(Math.max(m, photo.left + photo.width / 2 - bw / 2), vw - bw - m);
+      y = side === "below" ? photo.bottom + gap : photo.top - gap - bh;
+      y = Math.min(Math.max(m, y), vh - bh - m);
+      tail = Math.min(Math.max(16, photo.left + photo.width / 2 - x - 9), bw - 30);
+    }
+
+    bubble.dataset.side = side;
+    bubble.style.left = Math.round(x) + "px";
+    bubble.style.top = Math.round(y) + "px";
+    bubble.style.setProperty("--tail", Math.round(tail) + "px");
+    bubble.style.setProperty("--origin",
+      side === "right" ? "0 " + tail + "px" :
+      side === "left" ? "100% " + tail + "px" :
+      side === "below" ? tail + "px 0" : tail + "px 100%");
+  }
 
   function fillChef(i) {
     chefIndex = (i + members.length) % members.length;
-    var m = members[chefIndex];
-    var photo = m.querySelector(".member-photo");
-    chef.querySelector(".chef-index").textContent = (chefIndex + 1) + " / " + members.length;
-    chef.querySelector(".chef-photo img").src = m.querySelector(".face img").getAttribute("src");
-    chef.querySelector(".chef-photo img").alt = m.querySelector(".face img").alt;
-    chef.querySelector(".chef-first").textContent = m.querySelector(".member-name").textContent;
-    chef.querySelector(".chef-aka").textContent = m.querySelector(".member-aka").textContent;
-    chef.querySelector(".chef-role").innerHTML = m.querySelector(".member-role").innerHTML;
-    chef.querySelector(".chef-insta").href = photo.getAttribute("href");
+    var mb = members[chefIndex];
+    var insta = mb.querySelector(".member-photo").getAttribute("href");
 
-    // Rubriques : on regroupe chaque intitulé avec son texte
+    members.forEach(function (x, k) { x.classList.toggle("is-selected", k === chefIndex); });
+    chef.querySelectorAll(".chef-tab").forEach(function (t, k) { t.classList.toggle("is-active", k === chefIndex); });
+    chef.querySelector(".chef-index").textContent = (chefIndex + 1) + " / " + members.length;
+
+    var first = chef.querySelector(".chef-first");
+    var aka = chef.querySelector(".chef-aka");
+    first.textContent = mb.querySelector(".member-name").textContent;
+    aka.textContent = mb.querySelector(".member-aka").textContent;
+    first.href = aka.href = insta;
+    first.setAttribute("aria-label", first.textContent + " sur Instagram");
+    chef.querySelector(".chef-role").innerHTML = mb.querySelector(".member-role").innerHTML;
+
     var dl = chef.querySelector(".chef-fiche");
     dl.innerHTML = "";
-    var dts = m.querySelectorAll(".fiche-inner dt");
-    dts.forEach(function (dt) {
-      var group = document.createElement("div");
-      group.appendChild(dt.cloneNode(true));
-      group.appendChild(dt.nextElementSibling.cloneNode(true));
-      dl.appendChild(group);
+    mb.querySelectorAll(".fiche-inner dt").forEach(function (dt) {
+      dl.appendChild(dt.cloneNode(true));
+      dl.appendChild(dt.nextElementSibling.cloneNode(true));
     });
+    bubble.scrollTop = 0;
 
-    var face = m.querySelector(".face");
+    var face = mb.querySelector(".face");
     if (face) { blink(face); talk(face); }
+    placeBubble();
   }
 
   function openChef(i) {
     if (!chef) return;
-    chefTrigger = document.activeElement;
-    fillChef(i);
+    // Petit écran : on cale d'abord le portrait en haut, la bulle s'ouvre dessous
+    var photo = members[i].querySelector(".member-photo").getBoundingClientRect();
+    if (window.innerWidth < 700 && Math.abs(photo.top - 70) > 10) {
+      var target = window.scrollY + photo.top - 70;
+      // sans aller jusqu'au moment où le footer recouvre la brigade
+      var mainEl = document.getElementById("main");
+      if (hero && mainEl) target = Math.min(target, hero.offsetHeight + mainEl.offsetHeight - window.innerHeight);
+      window.scrollTo(0, Math.max(0, target));
+    }
     chef.classList.add("is-open");
     chef.setAttribute("aria-hidden", "false");
-    document.body.classList.add("chef-open");
-    chef.querySelector(".chef-panel").scrollTop = 0;
-    chef.querySelector(".chef-close").focus({ preventScroll: true });
+    chefScroll = window.scrollY;
+    fillChef(i);
   }
 
   function closeChef() {
     if (!chef || !chef.classList.contains("is-open")) return;
     chef.classList.remove("is-open");
     chef.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("chef-open");
-    if (chefTrigger && chefTrigger.focus) chefTrigger.focus({ preventScroll: true });
+    members.forEach(function (x) { x.classList.remove("is-selected"); });
+    chefIndex = -1;
   }
 
-  members.forEach(function (m, i) {
-    m.querySelector(".member-photo").addEventListener("click", function (event) {
+  members.forEach(function (mb, i) {
+    mb.querySelector(".member-photo").addEventListener("click", function (event) {
       event.preventDefault();
-      openChef(i);
+      if (chefIndex === i) closeChef(); else openChef(i);
     });
-    var more = m.querySelector(".member-more");
+    var more = mb.querySelector(".member-more");
     if (more) more.addEventListener("click", function () { openChef(i); });
   });
 
   if (chef) {
     chef.querySelector(".chef-close").addEventListener("click", closeChef);
-    chef.querySelector(".chef-backdrop").addEventListener("click", closeChef);
-    chef.querySelector(".chef-prev").addEventListener("click", function () { fillChef(chefIndex - 1); });
-    chef.querySelector(".chef-next").addEventListener("click", function () { fillChef(chefIndex + 1); });
+    // clic en dehors de la bulle (et hors d'un visage) → on ferme
+    document.addEventListener("click", function (event) {
+      if (!chef.classList.contains("is-open")) return;
+      if (bubble.contains(event.target)) return;
+      if (event.target.closest(".member-photo, .member-more")) return;
+      closeChef();
+    });
+    chef.querySelectorAll(".chef-tab").forEach(function (t) {
+      t.addEventListener("click", function () { fillChef(parseInt(t.getAttribute("data-i"), 10)); });
+    });
 
     document.addEventListener("keydown", function (event) {
       if (!chef.classList.contains("is-open")) return;
@@ -1038,15 +1097,17 @@
       if (event.key === "ArrowRight") fillChef(chefIndex + 1);
     });
 
-    // Mobile : glisser à gauche / à droite pour changer de chef
-    var startX = null;
-    chef.addEventListener("touchstart", function (e) { startX = e.touches[0].clientX; }, { passive: true });
-    chef.addEventListener("touchend", function (e) {
-      if (startX === null) return;
-      var dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) > 60) fillChef(chefIndex + (dx < 0 ? 1 : -1));
-      startX = null;
-    });
+    // la bulle suit le visage au scroll et au redimensionnement
+    var placing = false;
+    var follow = function () {
+      if (chefIndex < 0 || placing) return;
+      // au toucher, faire défiler la page range la bulle
+      if (!canHover && Math.abs(window.scrollY - chefScroll) > 60) { closeChef(); return; }
+      placing = true;
+      window.requestAnimationFrame(function () { placing = false; placeBubble(); });
+    };
+    window.addEventListener("scroll", follow, { passive: true });
+    window.addEventListener("resize", follow);
   }
 
 

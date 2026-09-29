@@ -813,7 +813,7 @@ body.e1-form-open {
 /* --- Logo typographique, affiché tel quel (entier, sur papier) --- */
 .logo-transition {
   padding: clamp(28px, 4vw, 64px) var(--gutter) clamp(20px, 2.6vw, 44px);
-  background: var(--paper-color) var(--paper);
+  background: var(--white);
   line-height: 0;
 }
 
@@ -1734,7 +1734,7 @@ body.e1-form-open {
 }
 
 .hero.stack-card   { z-index: 1; }
-main.stack-card    { z-index: 2; background: var(--paper-color) var(--paper); }
+main.stack-card    { z-index: 2; background: var(--white); }
 .footer.stack-card { z-index: 3; }
 
 main.stack-card,
@@ -2163,208 +2163,209 @@ html.is-sketch .approche-text b {
   position: fixed;
   inset: 0;
   z-index: 990;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4vh 4vw;
   visibility: hidden;
-  opacity: 0;
-  transition: opacity var(--t-base) ease, visibility 0s linear var(--t-base);
+  pointer-events: none;
 }
 
 .chef.is-open {
   visibility: visible;
-  opacity: 1;
-  transition: opacity var(--t-base) ease;
 }
 
-.chef-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, .55);
+.chef.is-open .chef-bubble {
+  pointer-events: auto;
 }
 
-.chef-panel {
-  position: relative;
-  width: min(1040px, 100%);
-  max-height: 92dvh;
+/* La bulle : papier, contour noir, ombre franche (esprit jeu / BD) */
+.chef-bubble {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: min(400px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: clamp(20px, 2.6vw, 40px);
+  padding: 14px 18px 16px;
+  border: 2px solid var(--black);
   background: var(--paper-color) var(--paper);
   color: var(--black);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
-  transform: translateY(24px);
-  transition: transform var(--t-base) var(--ease);
+  box-shadow: 7px 7px 0 var(--black);
+  opacity: 0;
+  transform: scale(.94);
+  transform-origin: var(--origin, 0 0);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--ease);
 }
 
-.chef.is-open .chef-panel {
+.chef.is-open .chef-bubble {
+  opacity: 1;
   transform: none;
 }
 
+/* Pointe de la bulle, orientée vers le visage (côté fixé en JS) */
+.chef-tail {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--paper-color);
+  border: 2px solid var(--black);
+}
+
+.chef-bubble[data-side="right"] .chef-tail {
+  left: -11px;
+  top: var(--tail, 40px);
+  border-top: 0;
+  border-right: 0;
+  transform: rotate(45deg);
+}
+
+.chef-bubble[data-side="left"] .chef-tail {
+  right: -11px;
+  top: var(--tail, 40px);
+  border-bottom: 0;
+  border-left: 0;
+  transform: rotate(45deg);
+}
+
+.chef-bubble[data-side="below"] .chef-tail {
+  top: -11px;
+  left: var(--tail, 40px);
+  border-bottom: 0;
+  border-right: 0;
+  transform: rotate(45deg);
+}
+
+.chef-bubble[data-side="above"] .chef-tail {
+  bottom: -11px;
+  left: var(--tail, 40px);
+  border-top: 0;
+  border-left: 0;
+  transform: rotate(45deg);
+}
+
+/* En-tête "sélection de joueur" : 3 emplacements */
 .chef-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding-bottom: 14px;
-  margin-bottom: clamp(18px, 2.4vw, 32px);
+  gap: 10px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--black);
 }
 
-.chef-kicker {
-  font-family: var(--font-text);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.chef-nav {
+.chef-tabs {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-.chef-prev,
-.chef-next {
-  display: inline-flex;
-  width: 34px;
-  height: 34px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--black);
-  transition: background var(--t-fast) ease, color var(--t-fast) ease;
+.chef-tab {
+  width: 40px;
+  height: 48px;
+  overflow: hidden;
+  border: 1.5px solid transparent;
+  opacity: .45;
+  transition: opacity var(--t-fast) ease, border-color var(--t-fast) ease, transform 120ms ease;
 }
 
-.chef-prev svg,
-.chef-next svg {
-  width: 15px;
-  height: 15px;
-}
-
-.chef-prev:hover,
-.chef-next:hover {
-  background: var(--black);
-  color: var(--white);
-}
-
-.chef-close {
-  margin-left: 10px;
-  font-family: var(--font-title);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.chef-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 36%) minmax(0, 1fr);
-  gap: clamp(20px, 3vw, 48px);
-  align-items: start;
-}
-
-.chef-photo img {
+.chef-tab img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   mix-blend-mode: multiply;
 }
 
-.chef-name {
+.chef-tab:hover {
+  opacity: .8;
+}
+
+.chef-tab.is-active {
+  opacity: 1;
+  border-color: var(--black);
+}
+
+.chef-tab:active {
+  transform: scale(.94);
+}
+
+.chef-kicker {
+  margin-left: auto;
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.chef-close {
   font-family: var(--font-title);
-  font-size: clamp(34px, 3.6vw, 56px);
+  font-size: 22px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.chef-name {
+  margin-top: 14px;
+  font-family: var(--font-title);
+  font-size: 34px;
   font-weight: 700;
   line-height: .95;
   letter-spacing: -.02em;
   text-transform: uppercase;
 }
 
+.chef-link {
+  transition: color var(--t-fast) ease;
+}
+
+.chef-link:hover {
+  color: var(--pen);
+}
+
 .chef-aka {
   display: inline-block;
-  font-size: .42em;
+  font-size: .45em;
   letter-spacing: 0;
-  vertical-align: .2em;
+  vertical-align: .25em;
 }
 
 .chef-role {
-  margin-top: .5em;
-  padding-bottom: .9em;
+  margin-top: .45em;
+  padding-bottom: .8em;
   border-bottom: 1px solid var(--black);
   font-family: var(--font-title);
-  font-size: clamp(16px, 1.4vw, 21px);
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.1;
   text-transform: uppercase;
 }
 
 .chef-fiche {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px 32px;
-  margin: 22px 0 0;
-}
-
-.chef-fiche > div:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
+  margin: 4px 0 0;
 }
 
 .chef-fiche dt {
+  margin-top: 12px;
   font-family: var(--font-title);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .chef-fiche dd {
-  margin: .35em 0 0;
+  margin: .25em 0 0;
   font-family: var(--font-text);
-  font-size: clamp(14px, 1.05vw, 16px);
-  line-height: 1.4;
-}
-
-.chef-insta {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 26px;
-  font-family: var(--font-title);
   font-size: 13px;
+  line-height: 1.38;
+}
+
+.chef-hint {
+  margin-top: 14px;
+  font-family: var(--font-hand);
+  font-size: 18px;
   font-weight: 700;
-  text-transform: uppercase;
+  color: var(--pen);
 }
 
-.chef-insta:hover .i-arrow {
-  transform: translate(2px, -2px);
-}
-
-body.chef-open {
-  overflow: hidden;
-}
-
-/* Mobile : la fiche occupe tout l'écran */
-@media (max-width: 640px) {
-  .chef {
-    padding: 0;
-    align-items: stretch;
-  }
-
-  .chef-panel {
-    max-height: none;
-    height: 100%;
-    padding: 16px var(--gutter) 40px;
-    box-shadow: none;
-  }
-
-  .chef-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chef-photo {
-    width: 58%;
-  }
-
-  .chef-fiche {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
+/* le visage sélectionné est "encadré", comme un joueur choisi */
+.member.is-selected .member-photo {
+  outline: 2px solid var(--black);
+  outline-offset: 4px;
 }
 
 

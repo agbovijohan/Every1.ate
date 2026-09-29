@@ -314,27 +314,22 @@
 <!-- Petites notifications (copie de l'email, easter eggs) -->
 <div class="toast" role="status" aria-live="polite"></div>
 
-<!-- Fiche d'un chef de la brigade -->
-<div class="chef" role="dialog" aria-modal="true" aria-labelledby="chef-name" aria-hidden="true">
-  <div class="chef-backdrop"></div>
-  <div class="chef-panel">
+<!-- Fiche d'un chef : bulle accrochée au visage, façon sélection de joueur -->
+<div class="chef" role="dialog" aria-labelledby="chef-name" aria-hidden="true">
+  <div class="chef-bubble">
+    <span class="chef-tail" aria-hidden="true"></span>
     <div class="chef-top">
-      <p class="chef-kicker">La brigade · <span class="chef-index">1 / 3</span></p>
-      <div class="chef-nav">
-        <button type="button" class="chef-prev" aria-label="Chef précédent"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
-        <button type="button" class="chef-next" aria-label="Chef suivant"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
-        <button type="button" class="chef-close">Fermer ×</button>
-      </div>
+      <div class="chef-tabs"><button type="button" class="chef-tab" data-i="0" aria-label="Fiche de Johan"><img src="assets/SF%20Johan.png" alt=""></button><button type="button" class="chef-tab" data-i="1" aria-label="Fiche de Pierre"><img src="assets/SF%20Pierre.png" alt=""></button><button type="button" class="chef-tab" data-i="2" aria-label="Fiche de Charles"><img src="assets/SF%20Charles.png" alt=""></button></div>
+      <p class="chef-kicker">Joueur <span class="chef-index">1 / 3</span></p>
+      <button type="button" class="chef-close" aria-label="Fermer la fiche">×</button>
     </div>
-    <div class="chef-grid">
-      <div class="chef-photo"><img src="" alt=""></div>
-      <div class="chef-info">
-        <h3 id="chef-name" class="chef-name"><span class="chef-first"></span> <span class="chef-aka"></span></h3>
-        <p class="chef-role"></p>
-        <dl class="chef-fiche"></dl>
-        <a class="chef-insta" href="#" target="_blank" rel="noopener noreferrer">Son Instagram<svg class="i-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 12L12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></a>
-      </div>
-    </div>
+    <h3 id="chef-name" class="chef-name">
+      <a class="chef-link chef-first" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <a class="chef-link chef-aka" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </h3>
+    <p class="chef-role"></p>
+    <dl class="chef-fiche"></dl>
+    <p class="chef-hint">Nom ou surnom → son Instagram</p>
   </div>
 </div>
 
