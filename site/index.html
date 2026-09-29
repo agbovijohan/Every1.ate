@@ -45,7 +45,7 @@
       "logo": "https://every1ate.netlify.app/assets/web/logo-typo-b.webp",
       "image": "https://every1ate.netlify.app/assets/web/og-image.jpg",
       "email": "hello@every1ate.com",
-      "address": { "@type": "PostalAddress", "addressLocality": "Paris", "addressCountry": "FR" },
+      "address": { "@type": "PostalAddress", "streetAddress": "38 rue des Mathurins", "postalCode": "75008", "addressLocality": "Paris", "addressCountry": "FR" },
       "areaServed": [{ "@type": "Country", "name": "France" }, { "@type": "Place", "name": "Europe" }],
       "knowsAbout": ["Stratégie de marque", "Stratégie créative", "Concepts marketing", "Direction artistique", "Campagne publicitaire", "Contenu social media", "Production photo", "Production vidéo", "Clip musical", "Activation de marque", "Événementiel", "Communauté", "Mode", "Streetwear", "Sportswear", "Musique", "Sport", "Culture populaire"],
       "sameAs": ["https://www.instagram.com/every1.ate/", "https://www.linkedin.com/company/every1-ate/"],
@@ -235,7 +235,7 @@
     <h2 class="col-title" data-reveal>La brigade <span class="note note-inline">les chefs&nbsp;!</span></h2>
     <div class="brigade">
 
-      <article class="member" id="brigade-johan" data-reveal>
+      <article class="member" id="brigade-johan" data-reveal data-pos="STRAT" data-stats="Vision stratégique:95|Concepts:94|Structure:91|Production:90|Persévérance:93">
         <a id="photo-johan" class="member-photo" href="https://www.instagram.com/petitbelier._/" target="_blank" rel="noopener noreferrer" aria-label="Voir la fiche de Johan">
           <span class="face" style="--ar:324/396;--src:url('assets/SF%20Johan.png')">
             <img src="assets/SF%20Johan.png" alt="Portrait de Johan" loading="lazy">
@@ -260,7 +260,7 @@
         </div>
       </article>
 
-      <article class="member" id="brigade-pierre" data-reveal>
+      <article class="member" id="brigade-pierre" data-reveal data-pos="DA" data-stats="Direction artistique:96|Souci du détail:97|Graphisme:94|Méthode:92|Créativité:95">
         <a id="photo-pierre" class="member-photo" href="https://www.instagram.com/boxitooooo/" target="_blank" rel="noopener noreferrer" aria-label="Voir la fiche de Pierre">
           <span class="face" style="--ar:305/393;--src:url('assets/SF%20Pierre.png')">
             <img src="assets/SF%20Pierre.png" alt="Portrait de Pierre" loading="lazy">
@@ -285,7 +285,7 @@
         </div>
       </article>
 
-      <article class="member" id="brigade-charles" data-reveal>
+      <article class="member" id="brigade-charles" data-reveal data-pos="RÉAL" data-stats="Réalisation:95|Image:93|Énergie:98|Décision:94|Esprit d’équipe:96">
         <a id="photo-charles" class="member-photo" href="https://www.instagram.com/charleslnr/" target="_blank" rel="noopener noreferrer" aria-label="Voir la fiche de Charles">
           <span class="face" style="--ar:308/397;--src:url('assets/SF%20Charles.png')">
             <img src="assets/SF%20Charles.png" alt="Portrait de Charles" loading="lazy">
@@ -380,21 +380,38 @@
 <!-- Petites notifications (copie de l'email, easter eggs) -->
 <div class="toast" role="status" aria-live="polite"></div>
 
-<!-- Fiche d'un chef : bulle accrochée au visage, façon sélection de joueur -->
-<div class="chef" role="dialog" aria-labelledby="chef-name" aria-hidden="true">
+<!-- Fiche joueur d'un chef (façon carte FIFA : points forts uniquement) -->
+<div class="chef" role="dialog" aria-modal="true" aria-labelledby="chef-name" aria-hidden="true">
+  <div class="chef-backdrop"></div>
   <div class="chef-bubble">
+    <button type="button" class="chef-arrow chef-prev" aria-label="Chef précédent"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4 3 8l4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+    <button type="button" class="chef-arrow chef-next" aria-label="Chef suivant"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></button>
+
     <div class="chef-top">
       <div class="chef-tabs"><button type="button" class="chef-tab" data-i="0" aria-label="Fiche de Johan"><img src="assets/SF%20Johan.png" alt=""></button><button type="button" class="chef-tab" data-i="1" aria-label="Fiche de Pierre"><img src="assets/SF%20Pierre.png" alt=""></button><button type="button" class="chef-tab" data-i="2" aria-label="Fiche de Charles"><img src="assets/SF%20Charles.png" alt=""></button></div>
       <p class="chef-kicker">Joueur <span class="chef-index">1 / 3</span></p>
       <button type="button" class="chef-close" aria-label="Fermer la fiche">×</button>
     </div>
-    <h3 id="chef-name" class="chef-name chef-first"></h3>
-    <p class="chef-aka-line">
-      <a class="chef-link chef-aka" href="#" target="_blank" rel="noopener noreferrer"></a>
-      <a class="chef-link chef-handle" href="#" target="_blank" rel="noopener noreferrer"></a>
-    </p>
-    <p class="chef-role"></p>
-    <dl class="chef-fiche"></dl>
+
+    <div class="chef-layout">
+      <div class="chef-visual">
+        <div class="chef-badge"><span class="chef-overall">95</span><span class="chef-pos">DA</span></div>
+        <img class="chef-portrait" src="" alt="">
+      </div>
+      <div class="chef-info">
+        <h3 id="chef-name" class="chef-name chef-first"></h3>
+        <p class="chef-aka-line">
+          <a class="chef-link chef-aka" href="#" target="_blank" rel="noopener noreferrer"></a>
+          <a class="chef-link chef-handle" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </p>
+        <p class="chef-role"></p>
+        <div class="chef-stats">
+          <svg class="chef-radar" viewBox="30 16 200 200" aria-hidden="true" focusable="false"></svg>
+          <ul class="chef-stat-list"></ul>
+        </div>
+        <dl class="chef-fiche"></dl>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -488,21 +505,13 @@
 
     <h2 id="e1-form-title" class="e1-form-title">PARLONS<br>PROJET.</h2>
 
-    <p class="e1-form-intro">Rendez-vous, brief ou collaboration : donnez-nous juste de quoi commencer. Réponse sous 48 à 72&nbsp;h.</p>
+    <p class="e1-form-intro">Un brief, une idée ou l’envie de travailler ensemble : donnez-nous juste de quoi commencer. Réponse sous 48 à 72&nbsp;h.</p>
+    <p class="e1-form-alt">Pas encore de projet ? <a href="mailto:hello@every1ate.com?subject=Demande%20de%20portfolio%20%E2%80%94%20Every1.ate">Demander notre portfolio</a></p>
 
     <form id="e1-project-form" action="https://formspree.io/f/mjyvnlvd" method="POST">
 
       <input type="hidden" name="subject" value="Nouvelle demande projet — Every1.ate">
 
-      <fieldset class="e1-intent">
-        <legend class="e1-services-label">Je souhaite</legend>
-        <div class="e1-services">
-          <label class="e1-service"><input type="radio" name="intention" value="Prendre rendez-vous" checked><span>Prendre rendez-vous</span></label>
-          <label class="e1-service"><input type="radio" name="intention" value="Déposer un brief"><span>Déposer un brief</span></label>
-          <label class="e1-service"><input type="radio" name="intention" value="Travailler avec vous"><span>Travailler avec vous</span></label>
-          <label class="e1-service"><input type="radio" name="intention" value="Recevoir le portfolio"><span>Recevoir le portfolio</span></label>
-        </div>
-      </fieldset>
 
       <div class="e1-form-grid">
 

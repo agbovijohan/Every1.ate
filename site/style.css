@@ -1080,6 +1080,17 @@ body.e1-form-open {
   line-height: 1.3;
 }
 
+.e1-form-alt {
+  margin: -12px 0 22px;
+  font-family: var(--font-text);
+  font-size: 12px;
+}
+
+.e1-form-alt a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .e1-form-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -2426,39 +2437,219 @@ html.is-sketch .approche-text b {
   pointer-events: auto;
 }
 
-/* Panneau fixe (seul le contenu change) — esprit "sélection de joueur" */
+/* Fiche joueur : quasi plein écran sur desktop (seul le contenu change) */
+.chef-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  opacity: 0;
+  transition: opacity var(--t-base) ease;
+}
+
+.chef.is-open .chef-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .chef-bubble {
   position: fixed;
-  right: max(24px, env(safe-area-inset-right));
-  top: 50%;
-  width: min(400px, calc(100vw - 48px));
-  max-height: 84dvh;
+  top: max(3vh, 16px);
+  bottom: max(3vh, 16px);
+  left: max(3vw, 16px);
+  right: max(3vw, 16px);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 14px 18px 18px;
+  padding: 18px clamp(56px, 5vw, 80px) 28px;
   border: 2px solid var(--black);
   background: var(--paper-color) var(--paper);
   color: var(--black);
-  box-shadow: 7px 7px 0 var(--black);
+  box-shadow: 10px 10px 0 var(--black);
   opacity: 0;
-  transform: translate(24px, -50%);
+  transform: scale(.97);
   transition: opacity var(--t-fast) ease, transform var(--t-base) var(--ease);
 }
 
 .chef.is-open .chef-bubble {
   opacity: 1;
-  transform: translate(0, -50%);
+  transform: none;
+}
+
+/* Flèches pour changer de joueur, sur les côtés */
+.chef-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--black);
+  background: var(--paper-color);
+  transform: translateY(-50%);
+  transition: background var(--t-fast) ease, color var(--t-fast) ease;
+}
+
+.chef-arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.chef-arrow:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+.chef-prev { left: 8px; }
+.chef-next { right: 8px; }
+
+.chef-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
+  gap: clamp(24px, 3.4vw, 60px);
+  align-items: start;
+  margin-top: 22px;
+}
+
+/* La tête en grand, avec un badge façon carte FIFA */
+.chef-visual {
+  position: sticky;
+  top: 0;
+}
+
+.chef-portrait {
+  width: 100%;
+  max-height: 74vh;
+  object-fit: contain;
+  object-position: top center;
+  mix-blend-mode: multiply;
+}
+
+.chef-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px 6px;
+  border: 2px solid var(--black);
+  background: var(--paper-color);
+  font-family: var(--font-title);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.chef-overall {
+  font-size: 40px;
+  letter-spacing: -.03em;
+}
+
+.chef-pos {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+/* Diagramme des points forts */
+.chef-stats {
+  display: grid;
+  grid-template-columns: minmax(0, 230px) minmax(0, 1fr);
+  gap: 10px 32px;
+  align-items: center;
+  margin: 22px 0 6px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--black);
+}
+
+.chef-radar {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chef-radar .ring {
+  fill: none;
+  stroke: rgba(0, 0, 0, .18);
+  stroke-width: 1;
+}
+
+.chef-radar .axis {
+  stroke: rgba(0, 0, 0, .18);
+  stroke-width: 1;
+}
+
+.chef-radar .shape {
+  fill: rgba(255, 242, 52, .75);
+  stroke: var(--black);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transform-origin: 130px 118px;
+  animation: e1-radar 420ms var(--ease) both;
+}
+
+.chef-radar .dot {
+  fill: var(--black);
+}
+
+.chef-radar text {
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  fill: var(--black);
+}
+
+@keyframes e1-radar {
+  from { transform: scale(.15); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.chef-stat-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, .25);
+  font-family: var(--font-text);
+  font-size: 14px;
+}
+
+.chef-stat-list b {
+  min-width: 2ch;
+  font-family: var(--font-title);
+  font-size: 20px;
+}
+
+/* Desktop : les rubriques sur deux colonnes */
+@media (min-width: 641px) {
+  .chef .chef-name {
+    font-size: clamp(44px, 5vw, 76px);
+  }
+
+  .chef .chef-role {
+    font-size: 18px;
+  }
+
+  .chef .chef-fiche {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 32px;
+  }
+
+  .chef .chef-fiche dd {
+    font-size: 14px;
+  }
 }
 
 /* Mobile : panneau en bas de l'écran, à portée de pouce */
 @media (max-width: 640px) {
   .chef-bubble {
+    top: auto;
     left: 0;
     right: 0;
-    top: auto;
     bottom: 0;
-    width: auto;
-    max-height: 62dvh;
+    max-height: 70dvh;
     padding: 12px var(--gutter) max(20px, env(safe-area-inset-bottom));
     border-width: 2px 0 0;
     box-shadow: 0 -10px 30px rgba(0, 0, 0, .25);
@@ -2467,6 +2658,36 @@ html.is-sketch .approche-text b {
 
   .chef.is-open .chef-bubble {
     transform: none;
+  }
+
+  .chef-arrow,
+  .chef-visual {
+    display: none;
+  }
+
+  .chef-layout {
+    display: block;
+    margin-top: 0;
+  }
+
+  .chef-stats {
+    grid-template-columns: minmax(0, 190px) minmax(0, 1fr);
+    gap: 6px 14px;
+  }
+
+  .chef-stat-list li {
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .chef-stat-list b {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 380px) {
+  .chef-stats {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2592,6 +2813,10 @@ html.is-sketch .approche-text b {
   font-family: var(--font-text);
   font-size: 13px;
   line-height: 1.38;
+}
+
+body.chef-open {
+  overflow: hidden;
 }
 
 /* le visage sélectionné est "encadré", comme un joueur choisi */

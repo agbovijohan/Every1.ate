@@ -1003,13 +1003,65 @@
     var dl = chef.querySelector(".chef-fiche");
     dl.innerHTML = "";
     mb.querySelectorAll(".fiche-inner dt").forEach(function (dt) {
-      dl.appendChild(dt.cloneNode(true));
-      dl.appendChild(dt.nextElementSibling.cloneNode(true));
+      var group = document.createElement("div");
+      group.appendChild(dt.cloneNode(true));
+      group.appendChild(dt.nextElementSibling.cloneNode(true));
+      dl.appendChild(group);
     });
+
+    // Portrait en grand + badge façon carte FIFA
+    var img = mb.querySelector(".face img");
+    var portrait = chef.querySelector(".chef-portrait");
+    portrait.src = img.getAttribute("src");
+    portrait.alt = img.alt;
+    chef.querySelector(".chef-pos").textContent = mb.getAttribute("data-pos") || "";
+
+    // Points forts : diagramme + liste
+    var stats = (mb.getAttribute("data-stats") || "").split("|").map(function (pair) {
+      var p = pair.split(":");
+      return { label: p[0], value: parseInt(p[1], 10) };
+    });
+    var total = 0;
+    stats.forEach(function (st) { total += st.value; });
+    chef.querySelector(".chef-overall").textContent = stats.length ? Math.round(total / stats.length) : "";
+    drawRadar(chef.querySelector(".chef-radar"), stats);
+    chef.querySelector(".chef-stat-list").innerHTML = stats.map(function (st) {
+      return "<li><b>" + st.value + "</b>" + st.label + "</li>";
+    }).join("");
+
     bubble.scrollTop = 0;
 
     var face = mb.querySelector(".face");
     if (face) { blink(face); talk(face); }
+  }
+
+  // Radar des points forts (échelle 50 → 100, comme une carte FIFA)
+  function drawRadar(svg, stats) {
+    var cx = 130, cy = 118, R = 82, n = stats.length;
+    var html = "";
+    var pt = function (k, r) {
+      var a = -Math.PI / 2 + k * 2 * Math.PI / n;
+      return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    };
+    [0.34, 0.67, 1].forEach(function (f) {
+      var ring = [];
+      for (var k = 0; k < n; k++) ring.push(pt(k, R * f).map(function (v) { return v.toFixed(1); }).join(","));
+      html += '<polygon class="ring" points="' + ring.join(" ") + '"/>';
+    });
+    var shape = [], dots = "", labels = "";
+    stats.forEach(function (st, k) {
+      var edge = pt(k, R);
+      html += '<line class="axis" x1="' + cx + '" y1="' + cy + '" x2="' + edge[0].toFixed(1) + '" y2="' + edge[1].toFixed(1) + '"/>';
+      var r = R * Math.max(0.08, (st.value - 50) / 50);
+      var p = pt(k, r);
+      shape.push(p[0].toFixed(1) + "," + p[1].toFixed(1));
+      dots += '<circle class="dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3"/>';
+      // la note au bout de chaque branche (les libellés sont dans la liste à côté)
+      var l = pt(k, R + 14);
+      labels += '<text x="' + l[0].toFixed(1) + '" y="' + (l[1] + 4).toFixed(1) + '" text-anchor="middle">' + st.value + '</text>';
+    });
+    html += '<polygon class="shape" points="' + shape.join(" ") + '"/>' + dots + labels;
+    svg.innerHTML = html;
   }
 
   function openChef(i) {
@@ -1017,12 +1069,14 @@
     fillChef(i);
     chef.classList.add("is-open");
     chef.setAttribute("aria-hidden", "false");
+    if (!mqMobile.matches) document.body.classList.add("chef-open");
   }
 
   function closeChef() {
     if (!chef || !chef.classList.contains("is-open")) return;
     chef.classList.remove("is-open");
     chef.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("chef-open");
     members.forEach(function (x) { x.classList.remove("is-selected"); });
     chefIndex = -1;
   }
@@ -1038,6 +1092,8 @@
 
   if (chef) {
     chef.querySelector(".chef-close").addEventListener("click", closeChef);
+    chef.querySelector(".chef-prev").addEventListener("click", function () { fillChef(chefIndex - 1); });
+    chef.querySelector(".chef-next").addEventListener("click", function () { fillChef(chefIndex + 1); });
     chef.querySelectorAll(".chef-tab").forEach(function (t) {
       t.addEventListener("click", function () { fillChef(parseInt(t.getAttribute("data-i"), 10)); });
     });
