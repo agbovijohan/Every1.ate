@@ -2,8 +2,9 @@
    EVERY1.ATE — SCRIPT
    Une seule logique par fonction :
    1. Horloge Paris
-   2. Animation Hero mobile
-   3. Formulaire "Parlons projet"
+   2. Scroll : animation Hero mobile + indicateur de défilement
+   3. Apparitions au scroll
+   4. Formulaire "Parlons projet" (+ validation instantanée)
    ========================================================= */
 
 (function () {
@@ -122,7 +123,6 @@
   }
 
   function render() {
-    ticking = false;
     if (!m) return;
 
     var p = m.distance > 0 ? clamp(-hero.getBoundingClientRect().top / m.distance) : 0;
@@ -153,17 +153,37 @@
     cta.style.pointerEvents = c > 0.5 ? "auto" : "none";
   }
 
+  /* Indicateur de défilement (barre fine en haut) */
+  var progress = document.querySelector(".scroll-progress");
+
+  function renderProgress() {
+    if (!progress) return;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var ratio = max > 0 ? clamp(window.scrollY / max) : 0;
+    progress.style.transform = "scaleX(" + ratio.toFixed(4) + ")";
+  }
+
+  /* Une seule boucle de scroll pour tout (1 calcul par image) */
+  function frame() {
+    ticking = false;
+    render();
+    renderProgress();
+  }
+
   function onScroll() {
-    if (m && !ticking) {
+    if (!ticking) {
       ticking = true;
-      window.requestAnimationFrame(render);
+      window.requestAnimationFrame(frame);
     }
   }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", renderProgress);
+  renderProgress();
 
   if (hero) {
     measure();
 
-    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", measure);
     window.addEventListener("load", measure);
 
@@ -184,7 +204,29 @@
 
 
   /* =======================================================
-     3. FORMULAIRE "PARLONS PROJET"
+     3. APPARITIONS AU SCROLL — une seule fois, 300 ms
+     ======================================================= */
+
+  var reveals = document.querySelectorAll("[data-reveal]");
+
+  if ("IntersectionObserver" in window && !mqReduce.matches) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px" });
+
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add("is-in"); });
+  }
+
+
+  /* =======================================================
+     4. FORMULAIRE "PARLONS PROJET"
      ======================================================= */
 
   var overlay = document.getElementById("e1-project-overlay");
@@ -193,9 +235,59 @@
   var submit = document.getElementById("e1-submit");
   var servicesError = document.getElementById("e1-services-error");
   var formError = document.getElementById("e1-form-error");
+  var submitLabel = submit && submit.querySelector(".e1-submit-label");
   var lastTrigger = null;
 
   if (!overlay || !form) return;
+
+  function setSubmit(label, loading) {
+    submit.classList.toggle("is-loading", !!loading);
+    submit.disabled = !!loading;
+    if (submitLabel) submitLabel.textContent = label;
+  }
+
+  /* --- Validation instantanée --- */
+  form.noValidate = true; // on remplace les bulles natives par notre retour visuel
+
+  var fields = form.querySelectorAll("[data-error]");
+
+  fields.forEach(function (input) {
+    var box = input.closest(".e1-field");
+    var msg = document.createElement("span");
+    msg.className = "e1-field-error";
+    msg.setAttribute("aria-live", "polite");
+    box.appendChild(msg);
+
+    input.addEventListener("blur", function () {
+      input.dataset.touched = "1";
+      check(input);
+    });
+    input.addEventListener("input", function () { check(input); });
+    input.addEventListener("change", function () {
+      input.dataset.touched = "1";
+      check(input);
+    });
+  });
+
+  function check(input) {
+    var box = input.closest(".e1-field");
+    var ok = input.checkValidity();
+    var touched = input.dataset.touched === "1";
+    box.classList.toggle("is-valid", ok);
+    box.classList.toggle("is-invalid", !ok && touched);
+    box.querySelector(".e1-field-error").textContent = !ok && touched ? input.dataset.error : "";
+    input.setAttribute("aria-invalid", !ok && touched ? "true" : "false");
+    return ok;
+  }
+
+  function resetValidation() {
+    fields.forEach(function (input) {
+      delete input.dataset.touched;
+      var box = input.closest(".e1-field");
+      box.classList.remove("is-valid", "is-invalid");
+      box.querySelector(".e1-field-error").textContent = "";
+    });
+  }
 
   function openForm(event) {
     if (event) event.preventDefault();
@@ -223,8 +315,8 @@
       form.reset();
       servicesError.classList.remove("is-visible");
       formError.classList.remove("is-visible");
-      submit.disabled = false;
-      submit.textContent = "ENVOYER ↗";
+      resetValidation();
+      setSubmit("Envoyer", false);
     }, 450);
   }
 
@@ -255,15 +347,23 @@
   form.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    if (!form.querySelector('input[name="services"]:checked')) {
-      servicesError.classList.add("is-visible");
+    var firstInvalid = null;
+    fields.forEach(function (input) {
+      input.dataset.touched = "1";
+      if (!check(input) && !firstInvalid) firstInvalid = input;
+    });
+
+    var hasService = !!form.querySelector('input[name="services"]:checked');
+    servicesError.classList.toggle("is-visible", !hasService);
+
+    if (firstInvalid) {
+      firstInvalid.focus();
       return;
     }
+    if (!hasService) return;
 
-    servicesError.classList.remove("is-visible");
     formError.classList.remove("is-visible");
-    submit.disabled = true;
-    submit.textContent = "ENVOI...";
+    setSubmit("Envoi", true);
 
     fetch(form.action, {
       method: "POST",
@@ -272,14 +372,14 @@
     })
       .then(function (response) {
         if (!response.ok) throw new Error("Formspree error");
-        submit.textContent = "ENVOYÉ";
+        setSubmit("Envoyé", true);
+        submit.classList.remove("is-loading");
         setTimeout(function () {
           panel.classList.add("is-success");
         }, 180);
       })
       .catch(function () {
-        submit.disabled = false;
-        submit.textContent = "RÉESSAYER ↗";
+        setSubmit("Réessayer", false);
         formError.classList.add("is-visible");
       });
   });

@@ -28,6 +28,10 @@
 
   --gutter: clamp(20px, 3.5vw, 56px);
   --ease: cubic-bezier(.22, 1, .36, 1);
+
+  /* Durées d'animation : courtes, pour guider sans ralentir */
+  --t-fast: 200ms;
+  --t-base: 300ms;
 }
 
 *,
@@ -91,6 +95,59 @@ body.e1-form-open {
   overflow: hidden;
 }
 
+/* Flèche vectorielle (remplace le caractère ↗, affiché en emoji sur iPhone) */
+.i-arrow {
+  display: inline-block;
+  width: .72em;
+  height: .72em;
+  margin-left: .28em;
+  vertical-align: .02em;
+  transition: transform var(--t-fast) var(--ease);
+}
+
+/* --- Indicateur de défilement --- */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 900;
+  width: 100%;
+  height: 2px;
+  background: var(--white);
+  mix-blend-mode: difference;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+/* --- Lien souligné animé (footer) --- */
+.u-link {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  padding-bottom: 2px;
+  transition: background-size var(--t-base) var(--ease), opacity var(--t-fast) ease;
+}
+
+.u-link:hover {
+  background-size: 0 1px;
+  background-position: 100% 100%;
+}
+
+/* --- Apparition au scroll (une seule fois, discrète) --- */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--t-base) ease, transform var(--t-base) var(--ease);
+  }
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 
 /* =========================================================
    1. HERO
@@ -119,6 +176,19 @@ body.e1-form-open {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+}
+
+/* --- Effet négatif ---
+   Logos, textes et CTA s'inversent selon la vidéo derrière eux.
+   Appliqué aux CONTENEURS : un enfant d'un bloc avec z-index
+   serait isolé de la vidéo et l'effet ne fonctionnerait pas. */
+
+.hero-top,
+.hero-logo,
+.hero-bottom,
+.m-icon,
+.m-typo {
+  mix-blend-mode: difference;
 }
 
 /* --- Top bar --- */
@@ -205,7 +275,6 @@ body.e1-form-open {
   line-height: 1.12;
   letter-spacing: -.01em;
   text-transform: uppercase;
-  mix-blend-mode: difference;
 }
 
 /* CTA éditorial : contour 1px, fond transparent, aucun arrondi */
@@ -224,18 +293,27 @@ body.e1-form-open {
   transition: background 220ms ease, color 220ms ease;
 }
 
-.hero-cta span {
-  display: inline-block;
-  transition: transform 220ms var(--ease);
-}
-
 .hero-cta:hover {
   background: var(--white);
   color: var(--black);
 }
 
-.hero-cta:hover span {
+.hero-cta:hover .i-arrow,
+#e1-submit:hover .i-arrow {
   transform: translate(2px, -2px);
+}
+
+/* Retour visuel à l'appui (mobile compris) */
+.hero-cta:active,
+#e1-submit:active,
+.e1-service:active span {
+  transform: scale(.97);
+}
+
+.hero-cta,
+#e1-submit {
+  transition: background var(--t-fast) ease, color var(--t-fast) ease,
+              transform 120ms ease, opacity var(--t-fast) ease;
 }
 
 
@@ -308,7 +386,7 @@ body.e1-form-open {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 240ms var(--ease);
+  transition: transform var(--t-base) var(--ease);
 }
 
 .member-photo:hover img {
@@ -353,6 +431,9 @@ body.e1-form-open {
 .logo-transition img {
   width: 100%;
   height: auto;
+  /* Le PNG a 11px transparents sous les lettres (sur 2607px de large) :
+     on les absorbe pour que les lettres "posent" sur le fond noir. */
+  margin-bottom: -0.5%;
 }
 
 
@@ -361,42 +442,55 @@ body.e1-form-open {
    ========================================================= */
 
 .footer {
+  position: relative;
   background: var(--black);
   color: var(--white);
 }
 
+/* Modèle Yard : liens à gauche, réseaux, meta — puis marquee en bas */
 .footer-main {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: baseline;
-  gap: 24px;
-  padding: clamp(26px, 2.2vw, 40px) clamp(20px, 2.1vw, 36px) clamp(18px, 1.6vw, 28px);
-}
-
-.footer-link {
-  justify-self: start;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  column-gap: clamp(40px, 8vw, 140px);
+  align-items: start;
+  padding: clamp(28px, 2.6vw, 44px) var(--gutter) clamp(34px, 3.4vw, 60px);
   font-family: var(--font-title);
-  font-size: clamp(15px, 1.3vw, 22px);
-  line-height: 1.1;
+  font-size: clamp(13px, 1vw, 16px);
+  line-height: 1.2;
   text-transform: uppercase;
-  transition: opacity 180ms ease;
 }
 
-.footer-main > :nth-child(2) {
-  justify-self: center;
+.footer-links li + li,
+.footer-social li + li {
+  margin-top: .75em;
 }
 
-.footer-email {
-  justify-self: end;
+.footer-links a,
+.footer-links button,
+.footer-social a {
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+#footer-email {
+  text-transform: none;
   font-family: var(--font-text);
-  font-size: clamp(15px, 1.4vw, 24px);
   font-weight: 700;
-  transition: opacity 180ms ease;
+  font-size: 1.12em;
 }
 
-.footer-link:hover,
-.footer-email:hover {
-  opacity: .6;
+.footer-meta {
+  text-align: right;
+  font-family: var(--font-text);
+  font-size: .85em;
+}
+
+.footer-meta p + p {
+  margin-top: .9em;
+}
+
+#footer-paris-clock {
+  white-space: pre;
 }
 
 /* --- Marquee --- */
@@ -405,7 +499,8 @@ body.e1-form-open {
   width: 100%;
   overflow: hidden;
   background: var(--black);
-  padding: 12px 0 22px;
+  padding: 18px 0 26px;
+  border-top: 1px solid rgba(255, 255, 255, .22);
 }
 
 .e1-marquee-track {
@@ -436,31 +531,6 @@ body.e1-form-open {
 @keyframes e1-scroll {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
-}
-
-/* --- Meta --- */
-
-.footer-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 20px;
-  padding: 14px clamp(20px, 2.1vw, 36px) 26px;
-  font-family: var(--font-text);
-  font-size: clamp(11px, .85vw, 14px);
-  text-transform: uppercase;
-}
-
-#footer-paris-clock {
-  white-space: pre;
-}
-
-.footer-meta a {
-  transition: opacity 180ms ease;
-}
-
-.footer-meta a:hover {
-  opacity: .6;
 }
 
 
@@ -503,7 +573,7 @@ body.e1-form-open {
   overflow-y: auto;
   overscroll-behavior: contain;
   transform: translateX(100%);
-  transition: transform 430ms var(--ease);
+  transition: transform 380ms var(--ease);
   box-shadow: -15px 0 40px rgba(0, 0, 0, .10);
 }
 
@@ -612,13 +682,66 @@ body.e1-form-open {
 }
 
 .e1-select::after {
-  content: "↓";
+  content: "";
   position: absolute;
-  right: 2px;
-  bottom: 7px;
-  font-family: var(--font-text);
-  font-size: 12px;
+  right: 4px;
+  bottom: 14px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
   pointer-events: none;
+}
+
+/* --- Validation instantanée --- */
+.e1-field input,
+.e1-field textarea,
+.e1-field select {
+  transition: border-color var(--t-fast) ease;
+}
+
+.e1-field label {
+  position: relative;
+}
+
+/* Coche dessinée en CSS (pas d'emoji) */
+.e1-field.is-valid label::after {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 8px;
+  margin-left: 8px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  animation: e1-check var(--t-fast) var(--ease) both;
+}
+
+@keyframes e1-check {
+  from { opacity: 0; transform: rotate(45deg) translateY(-2px) scale(.4); }
+  to   { opacity: 1; transform: rotate(45deg) translateY(-2px) scale(1); }
+}
+
+.e1-field.is-invalid input,
+.e1-field.is-invalid textarea,
+.e1-field.is-invalid select {
+  border-bottom-style: dashed;
+}
+
+.e1-field-error {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--font-text);
+  font-size: 10px;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) ease;
+}
+
+.e1-field.is-invalid .e1-field-error {
+  opacity: 1;
+  transform: none;
 }
 
 .e1-services-header {
@@ -658,6 +781,7 @@ body.e1-form-open {
 
 .e1-service span {
   display: inline-block;
+  transition: background var(--t-fast) ease, color var(--t-fast) ease, transform 120ms ease;
   padding: 6px 9px;
   border: 1px solid var(--black);
   background: var(--white);
@@ -666,7 +790,6 @@ body.e1-form-open {
   font-size: 9px;
   line-height: 1;
   text-transform: uppercase;
-  transition: background 140ms ease, color 140ms ease;
 }
 
 .e1-service input:checked + span {
@@ -693,16 +816,37 @@ body.e1-form-open {
 }
 
 #e1-submit {
+  display: inline-flex;
+  align-items: baseline;
   margin-top: 18px;
   font-family: var(--font-title);
   font-size: clamp(27px, 2.2vw, 38px);
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 6px;
-  transition: opacity 180ms ease;
+  text-transform: uppercase;
 }
 
 #e1-submit:hover {
-  opacity: .7;
+  opacity: .75;
+}
+
+/* Chargement : points animés, sans emoji */
+#e1-submit.is-loading .i-arrow {
+  display: none;
+}
+
+#e1-submit.is-loading .e1-submit-label::after {
+  content: "...";
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: e1-dots 900ms steps(4) infinite;
+}
+
+@keyframes e1-dots {
+  to { width: 1.1em; }
 }
 
 #e1-submit:disabled {
@@ -729,7 +873,7 @@ body.e1-form-open {
   color: var(--white);
   transform: translateX(100%);
   pointer-events: none;
-  transition: transform 520ms var(--ease);
+  transition: transform 400ms var(--ease);
 }
 
 .e1-project-panel.is-success {
@@ -808,11 +952,56 @@ body.e1-form-open {
   .hero-statement { max-width: 60vw; }
 
   .footer-main {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 36px;
   }
 
-  .footer-main > :nth-child(2) { justify-self: end; }
-  .footer-email { grid-column: 1 / -1; justify-self: start; }
+  .footer-meta {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .footer-meta p + p { margin-top: 0; }
+}
+
+/* =========================================================
+   BRIGADE EN LIGNES (≤ 900px)
+   1 profil = 1 ligne : portrait à gauche, texte à droite.
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .brigade {
+    display: block;
+    margin-left: 0;
+    border-bottom: 1px solid var(--black);
+  }
+
+  .member {
+    display: grid;
+    grid-template-columns: minmax(0, 40%) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: clamp(16px, 4vw, 32px);
+    align-items: start;
+    padding: 18px 0;
+    border-top: 1px solid var(--black);
+  }
+
+  .member-photo {
+    grid-row: 1 / -1;
+    width: 100%;
+  }
+
+  .member-name,
+  .member-aka,
+  .member-role {
+    grid-column: 2;
+    padding-left: 0;
+  }
+
+  .member-name { margin-top: 0; }
 }
 
 
@@ -990,40 +1179,19 @@ body.e1-form-open {
     margin-top: 1.1em;
   }
 
-  /* Brigade : une personne = un bloc (portrait + nom + rôles) */
-  .brigade {
-    display: block;
-    margin-left: 0;
-  }
-
-  .member + .member {
-    margin-top: 48px;
-  }
-
-  .member-photo {
-    width: 78%;
-    max-width: 320px;
-  }
-
-  .member-name,
-  .member-aka,
-  .member-role {
-    padding-left: 0;
-  }
-
+  /* Brigade : lignes (voir bloc ≤ 900px), tailles mobiles */
   .member-name {
-    margin-top: 14px;
-    font-size: 18px;
+    font-size: 17px;
   }
 
   .member-aka {
     margin-top: 6px;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .member-role {
-    margin-top: 10px;
-    font-size: 16px;
+    margin-top: 14px;
+    font-size: 14px;
   }
 
   /* ---------- TRANSITION ---------- */
@@ -1032,48 +1200,37 @@ body.e1-form-open {
     padding: 0 1vw;
   }
 
-  /* ---------- FOOTER ---------- */
+  /* ---------- FOOTER (modèle Yard) ---------- */
 
   .footer-main {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    padding: 32px var(--gutter) 26px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 24px;
+    row-gap: 32px;
+    padding: 26px var(--gutter) 30px;
+    font-size: 13px;
   }
 
-  .footer-link {
-    font-size: 17px;
-  }
-
-  .footer-email {
-    order: -1;
-    margin-bottom: 8px;
-    font-size: 20px;
-    overflow-wrap: anywhere;
-  }
-
-  .e1-marquee {
-    padding: 14px 0 20px;
-    border-top: 1px solid rgba(255, 255, 255, .2);
-    border-bottom: 1px solid rgba(255, 255, 255, .2);
-  }
-
-  .e1-marquee-text {
-    font-size: 22px;
-    padding-right: 22vw;
+  #footer-email {
+    font-size: 15px;
   }
 
   .footer-meta {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    row-gap: 14px;
-    padding: 20px var(--gutter) max(28px, env(safe-area-inset-bottom));
-    font-size: 12px;
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    font-size: 11px;
   }
 
-  .footer-meta > :nth-child(even) {
-    justify-self: end;
+  .footer-meta p + p { margin-top: 0; }
+
+  .e1-marquee {
+    padding: 14px 0 max(22px, env(safe-area-inset-bottom));
+  }
+
+  .e1-marquee-text {
+    font-size: 26px;
+    padding-right: 22vw;
   }
 
   /* ---------- FORMULAIRE ---------- */
